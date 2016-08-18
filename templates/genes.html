@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+{% block body %}
+	<div class='links_image'>
+		<a href="{{ url_for('pan_immune') }}"><img alt='pan_immune' src="{{ url_for('static',filename='links/pan_immune.png') }}">
+		<a href="{{ url_for('cell_type_specific') }}"'><img alt='cell' src="{{ url_for('static', filename='links/cell_type_specific.png') }}">
+	</div>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block body %}
+	<p>this is the cell type specific page</p>
+	<div class='search'>
+		<h1> Search Gene</h1>
+		<form action="{{ url_for('cell_type_specific') }}" method="post" id="search_gene">
+			{{ form.hidden_tag() }}
+			<p>
+				Please enter gene symbol:<br>
+				{{ form.gene_name }}<br>
+				Choose cell type <br>
+				{{ form.cell_type }}
+			</p>
+			<p><input type="submit" name="search"></p>
+		</form>
+		<p>
+		{% with messages = get_flashed_messages() %}
+			{% for message in messages %}
+				{{message}}
+			{% endfor %}
+		{% endwith %}
+		</p>
+		
+	</div>
+	<p>
+	{{ data }}
+	</p>
+	
+	{% if graph_data %}
+	
+	<embed type='image/svg+xml' src={{ graph_data|safe }} style="max-width:1000px"/>
+
+	{% endif %}
+
+	{% if second %}
+
+
+	<embed type='image/svg+xml' src={{ second|safe }} style="max-width:1000px"/>
+
+	{% endif %}
+{% endblock %}

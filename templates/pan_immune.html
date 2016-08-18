@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block body %}
+	<div class='search'>
+		<h2> Gene Expression Male vs. Females</h2>
+		<!--
+		<p> Type the gene symbol to see its expression levels in mice immune cells</p>
+		<form action="{{ url_for('pan_immune') }}" method='post' id='gene_form'>
+			<input type='text' name='gene_name' placeholder="enter gene symbol here" />
+			<input type='submit' value = 'search'>
+		</form>
+		{% with messages = get_flashed_messages() %}
+			{% for message in messages %}
+				{{message}}
+			{% endfor %}
+		{% endwith %}
+		<br>
+		-->
+
+		<!-- removed choice 		
+		<p>
+		Data set:
+		</p>
+		<select name='data_sets' form='gene_form'>
+			<option value = 'All'>All</option>
+			<option value = 'ImmGen'>Immgen</option>
+			<option value = 'Female'>GenderExp</option>
+		</select>
+		-->
+		<form action="{{ url_for('pan_immune') }}" method="post" id="search_gene">
+			<p>
+				Type the gene symbol to see its expression levels in mice immune cells:<br>
+				{{ form.gene_name }}
+				
+			</p>
+			<p><input type="submit" name="search"></p>
+		</form>
+		{% with messages = get_flashed_messages() %}
+			{% for message in messages %}
+				{{message}}
+			{% endfor %}
+		{% endwith %}
+		<br>
+	</div>
+	<div class='graphs'>
+		<!-- old legacy code
+		{% with messages = get_flashed_messages() %}
+			{% for message in messages %}
+				<img src={{message}} alt = 'this is a graph'>
+				<br>
+			{% endfor %}
+		{% endwith %}
+		-->
+		<!-- normal image graphs
+		{% for image in images %}
+			<img src={{image}} alt = {{image}}>
+			<br>
+		{% endfor %}
+		-->
+		{% for graph in super_graphs %}
+			<embed type='image/svg+xml' src = {{ graph|safe }} style="width:870px"/>
+			<br>
+		{% endfor %}
+	</div>
+
+{% endblock %}
