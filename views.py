@@ -149,21 +149,66 @@ class Cell_Type_Specific(flask.views.MethodView):
 
 		return flask.render_template('cell_type_specific.html',form=form,data=data,graph_data=graph_data)
 
-class Pan_Immune_2(flask.views.MethodView):
+class Pan_Immune(flask.views.MethodView):
 	def get(self):
 		form = forms.GeneSearchForm()
-		return flask.render_template('pan_immune_2.html',form=form)
+		return flask.render_template('pan_immune.html',form=form)
 	def post(self):
 		form = forms.GeneSearchForm()
 		gene_name = flask.request.form['gene_name'].upper()
 		data = grapher.new_plot(gene_name)
+		# if there is no data, there is no gene with this symbol. alert the user.
 		if data == -1:
 			flask.flash('Gene not found.')	
-			return flask.render_template('pan_immune_2.html',form=form)
-
-
+			return flask.render_template('pan_immune.html',form=form)			
+		
 		graphs = []
-		for data_set in data:
+		for data_set in data:		
+			for data_tuple_key in data[data_set]:
+				# current_data holds a list of tuples with column names and values		
+				current_data = data[data_set][data_tuple_key][5:] 
+				graph = pygal.XY(stroke=False,show_y_guides=False,
+								truncate_label =-1,dots_size=4,
+								legend_at_bottom=True)
+				current_male_x = 0
+				current_female_x = 0
+				current_x = 0
+				margin = 2
+				last_female_cell = ''
+				last_male_cell = ''
+				# the data will be arranged as a list of tuples, each tuple will be as (X,Y)
+				males_data = []
+				females_data = []
+				x_labels = []
+				for tup in current_data:
+					exp_level = float(tup[1])
+					parts = tup[0].split('_')
+					cell = parts[0]
+					# check if it is a male or female cell.
+					if 'M' in parts or 'male' in parts:
+						# its a male cell
+						if cell != last_male_cell:
+							last_male_cell = cell
+							current_male_x += 2
+							current_x = current_male_x
+						males_data.append((current_male_x,exp_level))
+					elif 'F' in parts or 'female' in parts:
+						# its a female cell
+						if cell != last_female_cell:
+							last_female_cell = cell
+							current_female_x += 2
+							current_x = current_female_x
+						females_data.append((current_female_x,exp_level))
+					x_labels.append({ 'value': current_x,'label':cell })
+				# send data for labels if needed.
+				graph.title = ' '.join([gene_name,'exp level dataset:',data_set,data_tuple_key])
+				graph.y_title = 'exp level log2'
+				graph.add('Female',females_data)
+				graph.add('Male',males_data)
+				graph.x_labels = x_labels
+				graphs.append(graph.render_data_uri())
+		return flask.render_template('pan_immune.html',form=form,graphs=graphs)
+"""
 			current_data = list(data[data_set][0])
 			row_data = current_data[5:]
 			new_data = []
@@ -181,9 +226,10 @@ class Pan_Immune_2(flask.views.MethodView):
 			graph.add('Male',xy_male)
 			graphs.append(graph.render_data_uri())
 			xy_data = [xy_male,xy_female]	
-		return flask.render_template('pan_immune_2.html',form=form,data=data,graphs=graphs)
-
-class Pan_Immune(flask.views.MethodView):
+		return flask.render_template('pan_immune.html',form=form,data=data,graphs=graphs)
+"""
+"""
+class Pan_Immune_old(flask.views.MethodView):
 	def get(self):
 		form = forms.GeneSearchForm()
 		return flask.render_template('pan_immune.html',form=form)
@@ -235,3 +281,4 @@ class Pan_Immune(flask.views.MethodView):
 		#			files_list.append(file)
 					#flask.flash(filedir) was once legacy hack.
 		return flask.render_template('pan_immune.html',form=form,super_graphs=graphs_data)
+"""

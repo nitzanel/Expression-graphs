@@ -26,7 +26,7 @@
 			<option value = 'Female'>GenderExp</option>
 		</select>
 		-->
-		<form action="{{ url_for('pan_immune_2') }}" method="post" id="search_gene">
+		<form action="{{ url_for('pan_immune') }}" method="post" id="search_gene">
 			<p>
 				Type the gene symbol to see its expression levels in mice immune cells:<br>
 				{{ form.gene_name }}
@@ -41,11 +41,6 @@
 		{% endwith %}
 		<br>
 	</div>
-	data:
-	{% if data %}
-		have data!
-		{{ data }}
-	{% endif %}
 	<div class='graphs'>
 		<!-- old legacy code
 		{% with messages = get_flashed_messages() %}
@@ -61,7 +56,7 @@
 			<br>
 		{% endfor %}
 		-->
-		{% for graph in graphs %}
+		{% for graph in super_graphs %}
 			<embed type='image/svg+xml' src = {{ graph|safe }} style="width:870px"/>
 			<br>
 		{% endfor %}

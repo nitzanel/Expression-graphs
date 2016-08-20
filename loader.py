@@ -14,30 +14,45 @@ class Loader():
 				self.tables_names.append(item)
 
 
-	# creates an sql connection with the database
+	# creates sql connection with the database.
 	def setup(self):
 		self.conn = lite.connect(self.db_name)
 		print 'Opend',self.db_name
 	
+	# close sql connection.
 	def tear_down(self):
 		if self.conn:
 			self.conn.close()
-	
+			print 'closed',self.db_name
+
+	# input: table name.
+	# returns a list of columns names in a table.
+	def get_columns_names(self,table_name):
+		query = ' '.join(['SELECT * from',table_name])
+		cursor = self.conn.execute(query)
+		names = list(map(lambda x:x[0], cursor.description))
+		return names
+
+	# returns a list of names of the tables in the database
 	def get_tables_names(self):
 		self.setup()
 		cursor = self.conn.cursor()
 		cursor.execute('SELECT name FROM sqlite_master WHERE type="table";')
-		tables_names = []
-		for item in cursor.fetchall():
-			tables_names.append(item[0])
+		tables_names = list(map(lambda x:x[0],cursor.fetchall()))
 		self.tear_down()
 		return tables_names
-	def get_select_command(self,value, dataset,cells='ALL',condition='gene_name'):
+
+	# input:
+	# condition: condition of the query, defaults to gene_name.
+	# value: the value of the condition.
+	# dataset: the table name.
+	# cells: a list of cells names, if the value is ALL, will select all columns. default to ALL
+	def get_select_command(self,value,dataset,cells='ALL',condition='gene_name'):
 		if cells == 'ALL':
-			cells = '*'
-		
+			cells = '*'		
 		command = ' '.join(['SELECT',cells,'from',dataset,'where',condition,'=',''.join(['"',value,'"'])])
 		return command
+
 	# the function takes a gene_name, a list of datasets dirs, which can be set to 'ALL'
 	# and an optional argument of cell type for cell specific graphs
 	# returns a dictionary where the keys are the datasets and the values are lists of expression data 
@@ -48,19 +63,27 @@ class Loader():
 		if datasets == 'ALL':
 			datasets = self.tables_names
 		for dataset in datasets:
-			data[dataset] = self.get_gene_data(gene_name,dataset,cells)
+			values_list = self.get_gene_data(gene_name,dataset,cells)
+			colms = self.get_columns_names(dataset)
+			data_tuples = {}
+			for index,values in enumerate(values_list):
+				key = '_'.join(['repeat',str(index+1)])
+				data_tuples[key] = zip(colms,values)
+			data[dataset] = data_tuples
 		self.tear_down()
 		return data
 
+	# input:
+	# gene_name is the gene symbol
+	# data_set is the table name in the sql database (the dataset)
+	# cells is a list of cells to get values for (columns in the sql dataset). defaults to ALL.
 	def get_gene_data(self,gene_name,data_set,cells='ALL'):	
 		cursor = self.conn.execute(self.get_select_command(gene_name,data_set,cells))
-		
 		data = []
 		for row in cursor:
-			data.append(row)
-
+			data.append(list(row))
 		return data
-
+ 		
 	def getCellsRanges(self):
 		if self.cellIndexed is not True:
 			self.getSets()

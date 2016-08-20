@@ -41,6 +41,11 @@
 		{% endwith %}
 		<br>
 	</div>
+	data:
+	{% if data %}
+		have data!
+		{{ data }}
+	{% endif %}
 	<div class='graphs'>
 		<!-- old legacy code
 		{% with messages = get_flashed_messages() %}
@@ -56,7 +61,7 @@
 			<br>
 		{% endfor %}
 		-->
-		{% for graph in super_graphs %}
+		{% for graph in graphs %}
 			<embed type='image/svg+xml' src = {{ graph|safe }} style="width:870px"/>
 			<br>
 		{% endfor %}
