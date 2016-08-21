@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'homepage.html' %}
 {% block body %}
 	<div class='search'>
 		<h2> Gene Expression Male vs. Females</h2>
@@ -16,28 +16,13 @@
 		{% endwith %}
 		<br>
 	</div>
-	data:
 	{% if data %}
 		have data!
 		{{ data }}
 	{% endif %}
 	<div class='graphs'>
-		<!-- old legacy code
-		{% with messages = get_flashed_messages() %}
-			{% for message in messages %}
-				<img src={{message}} alt = 'this is a graph'>
-				<br>
-			{% endfor %}
-		{% endwith %}
-		-->
-		<!-- normal image graphs
-		{% for image in images %}
-			<img src={{image}} alt = {{image}}>
-			<br>
-		{% endfor %}
-		-->
 		{% for graph in graphs %}
-			<embed type='image/svg+xml' src = {{ graph|safe }} style="width:870px"/>
+			<embed type='image/svg+xml' src = {{ graph|safe }} />
 			<br>
 		{% endfor %}
 	</div>

@@ -97,6 +97,10 @@ class Main(flask.views.MethodView):
 		#	return flask.g.sijax.process_request()
 		return flask.render_template('home.html')
 
+class Homepage(flask.views.MethodView):
+	def get(self):
+		return flask.render_template('homepage.html')
+
 class About(flask.views.MethodView):
 	def get(self):
 		return flask.render_template('about.html')
@@ -156,8 +160,13 @@ class Pan_Immune(flask.views.MethodView):
 	def post(self):
 		form = forms.GeneSearchForm()
 		gene_name = flask.request.form['gene_name'].upper()
+		if gene_name == '-':
+			flask.flash('Symbol not valid.')	
+			return flask.render_template('pan_immune.html',form=form)			
+
 		data = grapher.new_plot(gene_name)
 		# if there is no data, there is no gene with this symbol. alert the user.
+
 		if data == -1:
 			flask.flash('Gene not found.')	
 			return flask.render_template('pan_immune.html',form=form)			

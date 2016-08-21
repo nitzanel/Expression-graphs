@@ -9,15 +9,17 @@
 	
 	<header>
 		<nav>
-			<a {% if request.path =='/' %} 				  	class="active"{% endif %} href="{{ url_for('home') }}"> <strong> Home </strong></a>
-			<a {% if request.path.startswith('/genes') %} 	class="active"{% endif %} href="{{ url_for('genes') }}"> <strong> Genes </strong></a>
-			<a {% if request.path =='/about' %} 		  	class="active"{% endif %} href="{{ url_for('about') }}"> <strong> About </strong></a>
+			<a {% if request.path =='/' %}class="active"{% endif %} href="{{ url_for('home') }}"> <strong> Home </strong></a>
+			<a {% if request.path.startswith('/genes') %}class="active"{% endif %} href="{{ url_for('genes') }}"> <strong> Genes </strong></a>
+			<a {% if request.path =='/about' %} class="active"{% endif %} href="{{ url_for('about') }}"> <strong> About </strong></a>
 		</nav>
 	</header>
 
 	<body>
 		<div id = 'content'>
+		<br>
 			{% block body %} {% endblock %}
+		<br>
 		</div>
 	</body>
 </html>

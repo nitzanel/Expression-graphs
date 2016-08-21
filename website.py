@@ -35,6 +35,10 @@ app.add_url_rule('/genes/cell_type_specific',
 app.add_url_rule('/login',
 				view_func=views.Login.as_view('login'),
 				methods=['GET','POST'])
+app.add_url_rule('/homepage',
+					view_func=views.Homepage.as_view('homepage'),
+					methods=['GET'])
+
 """
 app.add_url_rule('/genes/pan_immune_old',
 		view_func=views.Pan_Immune_old.as_view('pan_immune_2'),
