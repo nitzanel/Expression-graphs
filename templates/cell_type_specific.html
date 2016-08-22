@@ -22,20 +22,18 @@
 		</p>
 		
 	</div>
-	<p>
-	{{ data }}
-	</p>
 	
-	{% if graph_data %}
-	
-	<embed type='image/svg+xml' src={{ graph_data|safe }} style="max-width:1000px"/>
-
+	{% if graphs_data %}
+		<div style="display:none;">
+			there are graphs
+		</div>
+		{% for graph in graphs_data %}
+			<div class="graphs">
+				<embed type='image/svg+xml' src = {{ graph|safe }} />
+				<br>
+			</div>
+		{% endfor %}
 	{% endif %}
 
-	{% if second %}
 
-
-	<embed type='image/svg+xml' src={{ second|safe }} style="max-width:1000px"/>
-
-	{% endif %}
 {% endblock %}

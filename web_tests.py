@@ -60,15 +60,29 @@ class GraphTestCase(BaseTestCase):
 		self.assertEqual(response.status_code,200)
 		self.assertNotIn('there are graphs',response.data)	
 
-	# this test suppose to fail right now
-	def test_cell_type_specific_post(self):
-		#response = self.client.post('/genes/cell_type_specific', data={'gene_name':'SON'})
-		#self.assertEqual(response.status_code,400)
-		pass
-	def test_cell_type_specific_many(self):
-		pass
+	# Ensure a post request in cell_type_specific works for a known gene symbol and cell type
+	def test_cell_type_specific_post_exist(self):
+		response = self.client.post('/genes/cell_type_specific', data={'gene_name':'SON','cell_type':'GN'})
+		self.assertEqual(response.status_code,200)
+		self.assertIn('there are graphs',response.data)
 
+	# Ensure a post request in pan_immune doesnt work for empty gene
+	def test_cell_type_specific_empty(self):
+		response = self.client.post('/genes/pan_immune', data={'gene_name':'','cell_type':'GN'})
+		self.assertEqual(response.status_code,200)
+		self.assertNotIn('there are graphs',response.data)
 
+	# Ensure a post request in pan_immune doesnt work for ' '
+	def test_cell_type_specific_empty(self):
+		response = self.client.post('/genes/pan_immune', data={'gene_name':' ','cell_type':'GN'})
+		self.assertEqual(response.status_code,200)
+		self.assertNotIn('there are graphs',response.data)
+	
+	# Ensure a post request in pan_immune doesnt work for something that is not a known gene in the database
+	def test_pan_immune_unknown_gene(self):
+		response = self.client.post('/genes/pan_immune', data={'gene_name':'notagene','cell_type':'GN'})
+		self.assertEqual(response.status_code,200)
+		self.assertNotIn('there are graphs',response.data)	
 
 if __name__ == '__main__':
 	unittest.main()

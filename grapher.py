@@ -43,6 +43,12 @@ class Grapher():
 		return data_set
 
 
+	def new_bar_plot(self,gene_name,cell_type,datasets = 'ALL'):
+		data = self.loader.get_gene(gene_name=gene_name,datasets=datasets,cells=cell_type)
+		if data == {}:
+			data = -1
+		return data
+
 	def new_plot(self,gene_name,cells='ALL'):
 		data = self.loader.get_gene(gene_name=gene_name,datasets='ALL',cells=cells)
 		if data == {}:

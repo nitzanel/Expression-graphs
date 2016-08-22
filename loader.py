@@ -46,17 +46,19 @@ class Loader():
 	# condition: condition of the query, defaults to gene_name.
 	# value: the value of the condition.
 	# dataset: the table name.
-	# cells: a list of cells names, if the value is ALL, will select all columns. default to ALL
+	# cells: a cell type, if the value is ALL, will select all columns. default to ALL
 	def get_select_command(self,value,dataset,cells='ALL',condition='gene_name'):
 		if cells == 'ALL':
-			cells = '*'		
+			cells = '*'	
+		else:
+			cells = ', '.join(self.get_cells_names(cells,dataset))
 		command = ' '.join(['SELECT',cells,'from',dataset,'where',condition,'=',''.join(['"',value,'"'])])
 		return command
 
 	# the function takes a gene_name, a list of datasets dirs, which can be set to 'ALL'
 	# and an optional argument of cell type for cell specific graphs
 	# returns a dictionary where the keys are the datasets and the values are lists of expression data 
-	# for each row of the gene in the database. 	
+	# for each row of the wgene in the database. 	
 	def get_gene(self,gene_name,datasets='ALL',cells='ALL'):
 		self.setup()
 		data = {}
@@ -64,7 +66,10 @@ class Loader():
 			datasets = self.tables_names
 		for dataset in datasets:
 			values_list = self.get_gene_data(gene_name,dataset,cells)
-			colms = self.get_columns_names(dataset)
+			if cells == 'ALL':
+				colms = self.get_columns_names(dataset)
+			else:
+				colms = self.get_cells_names(cells,dataset)
 			data_tuples = {}
 			for index,values in enumerate(values_list):
 				key = '_'.join(['repeat',str(index+1)])
@@ -77,12 +82,25 @@ class Loader():
 	# cell_type: the type of cell, for example: 'GN','B1a'
 	# table: the table name in the sql shema. get it from get_tables_names
 	# returns a list of cells of the same type of the input cell.
-	def get_cells_names(cell_type,table):
+	def get_cells_names(self,cell_type,table):
 		cells = self.get_columns_names(table)
+		cells_types = [cell_type]
 		cells_names = []
+		if cell_type.upper() == 'B1AB':
+			cells_types.append('B1A')
+		elif cell_type.upper() == 'CD19':
+			cells_types.append('B')
+		elif cell_type.upper() == 'T8':
+			cells_types.append('CD8T')
+		elif cell_type.upper() == 'T4':
+			cells_types.append('CD4T')
+		
 		for cell in cells:
-			if cell.startswith(cell_type):
-				cells_names.append(cell)
+			for item in cells_types:
+				if item.upper() in cell.upper().split('_'):
+					print item
+					cells_names.append(cell)
+		print cells_names
 		return cells_names
 
 	# input:
@@ -96,6 +114,7 @@ class Loader():
 			data.append(list(row))
 		return data
  		
+
 	def getCellsRanges(self):
 		if self.cellIndexed is not True:
 			self.getSets()

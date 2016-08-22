@@ -129,29 +129,39 @@ class Cell_Type_Specific(flask.views.MethodView):
 
 		cell_type = flask.request.form['cell_type']
 
-		if gene_name in bad_names or gene_name.startswith(' '):
-			print 'please enter a valid gene symbol.'
-		#create the graph
-		data = arrange_data(grapher.bar_plot(gene_name,cell_type))
-		
+		if gene_name == '-':
+			flask.flash('Symbol no valid.')
+			return flask.render_template('cell_type_specific.html',form=form)
+
+		data = grapher.new_bar_plot(gene_name,cell_type)
+			
 		if data == -1:
 			flask.flash('Gene not found.')
-			return flask.render_template('cell_type_specific.html',form=form)
-		data = get_bars_values(data)
-		x_labels = data['x_labels']
-		data = data['data']
-		dark_lighten_style = LightenStyle('#CC2233')
+			return flask.render_template('cell_type_specific.html',form=form)		
 
-		graph = pygal.Histogram(truncate_label=-1)
+		graph = pygal.Bar()
 
-		graph.title = ''.join([gene_name,' expression level in ',cell_type])
-		graph.y_title = 'Expression level log2'
-		for key in data:
-			graph.add(str(key),data[key])
-		graph.x_labels = x_labels
-		graph_data = graph.render_data_uri()
+		for data_set in data:
+			for data_tuple_key in data[data_set]:
+				current_data = data[data_set][data_tuple_key]
+				exp_males = []
+				exp_females = []
 
-		return flask.render_template('cell_type_specific.html',form=form,data=data,graph_data=graph_data)
+				for tup in current_data:
+					exp_level = float(tup[1])
+					parts = tup[0].split('_')
+					if 'M' in parts or 'male' in parts:
+						exp_males.append(exp_level)
+					elif 'M' in parts or 'female' in parts:
+						exp_females.append(exp_level)
+				graph.add(' '.join(['males',data_set,data_tuple_key]),exp_males)
+				graph.add(' '.join(['females',data_set,data_tuple_key]),exp_females)
+		graph.title = ' '.join([gene_name,'expression level in',cell_type])
+		graph.y_title = 'expression level log2'
+		graphs_data = []
+		graphs_data.append(graph.render_data_uri())
+		print data
+		return flask.render_template('cell_type_specific.html',form=form,data=data,graphs_data=graphs_data)
 
 class Pan_Immune(flask.views.MethodView):
 	def get(self):
