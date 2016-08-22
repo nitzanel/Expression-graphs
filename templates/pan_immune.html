@@ -20,11 +20,18 @@
 		have data!
 		{{ data }}
 	{% endif %}
+
 	<div class='graphs'>
+	{% if graphs %}
+
+		<div style="display:none;"}>
+		there are graphs
+		</div>
 		{% for graph in graphs %}
 			<embed type='image/svg+xml' src = {{ graph|safe }} />
 			<br>
 		{% endfor %}
+	{% endif %}
 	</div>
 
 {% endblock %}

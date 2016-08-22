@@ -7,43 +7,44 @@ import os
 import functools
 import pygal
 
+class FlaskApp:
 
-path = os.path.join('.', os.path.dirname(__file__), 'static/js/sijax/')
+	def __init__(self):
+		path = os.path.join('.', os.path.dirname(__file__), 'static/js/sijax/')
+		
+		self.app = flask.Flask(__name__.split('.')[0])
+		self.app.secret_key = os.urandom(128)
 
-app = flask.Flask(__name__.split('.')[0])
-#app.config['SIJAX_STATIC_PATH'] = path
-#app.config['SIJAX_JSON_URI'] = '/static/js/sijax/json2.js'
-#flask_sijax.Sijax(app)
-
-app.secret_key = os.urandom(128)
-
-app.add_url_rule('/',
+		""" SET URL RULES """
+		self.app.add_url_rule('/',
 				view_func=views.Main.as_view('home'),
 				methods=['GET','POST'])
-app.add_url_rule('/about',
+		self.app.add_url_rule('/about',
 				view_func=views.About.as_view('about'),
 				methods=['GET'])
-app.add_url_rule('/genes',
+		self.app.add_url_rule('/genes',
 				view_func=views.Genes.as_view('genes'),
 				methods=['GET'])
-app.add_url_rule('/genes/pan_immune',
+		self.app.add_url_rule('/genes/pan_immune',
 				view_func=views.Pan_Immune.as_view('pan_immune'),
 				methods=['GET','POST'])
-app.add_url_rule('/genes/cell_type_specific',
+		self.app.add_url_rule('/genes/cell_type_specific',
 				view_func=views.Cell_Type_Specific.as_view('cell_type_specific'),
 				methods=['GET','POST'])
-app.add_url_rule('/login',
+		self.app.add_url_rule('/login',
 				view_func=views.Login.as_view('login'),
 				methods=['GET','POST'])
-app.add_url_rule('/homepage',
-					view_func=views.Homepage.as_view('homepage'),
-					methods=['GET'])
+		self.app.add_url_rule('/homepage',
+				view_func=views.Homepage.as_view('homepage'),
+				methods=['GET'])
 
-"""
-app.add_url_rule('/genes/pan_immune_old',
-		view_func=views.Pan_Immune_old.as_view('pan_immune_2'),
-		methods=['GET','POST'])
-"""
+	def run_debug(self):
+		self.app.run(debug=True)
+
+	def config_app(self,params):
+		pass
+
 if __name__ == '__main__':
-	app.run(debug=True)
-
+	print 'starting app'
+	App = FlaskApp().app
+	App.run(debug=True)
