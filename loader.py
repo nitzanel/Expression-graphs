@@ -74,6 +74,18 @@ class Loader():
 		return data
 
 	# input:
+	# cell_type: the type of cell, for example: 'GN','B1a'
+	# table: the table name in the sql shema. get it from get_tables_names
+	# returns a list of cells of the same type of the input cell.
+	def get_cells_names(cell_type,table):
+		cells = self.get_columns_names(table)
+		cells_names = []
+		for cell in cells:
+			if cell.startswith(cell_type):
+				cells_names.append(cell)
+		return cells_names
+
+	# input:
 	# gene_name is the gene symbol
 	# data_set is the table name in the sql database (the dataset)
 	# cells is a list of cells to get values for (columns in the sql dataset). defaults to ALL.

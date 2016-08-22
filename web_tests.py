@@ -1,17 +1,15 @@
 import os
 from website import FlaskApp
 import unittest
-from flask import url_for
 
 
 class BaseTestCase(unittest.TestCase):
-	""" A base test case."""
 
+	""" A base test case."""
 	def create_app(self):
 		flaskApp = FlaskApp()
 		flaskApp.app.config['TESTING'] =True
-		flaskApp.app.config['DEBUG'] =True
-		
+		flaskApp.app.config['DEBUG'] =True		
 		return flaskApp
 
 	def setUp(self):
@@ -22,14 +20,17 @@ class BaseTestCase(unittest.TestCase):
 		pass
 
 class FlaskTestCase(BaseTestCase):
+	# Ensure about loads without errors 
 	def test_about(self):
 		response = self.client.get('/about',content_type='html/text')
 		self.assertEqual(response.status_code,200)
 
+	# Ensure pan_immune loads without errors
 	def test_pan_immune(self):
 		response = self.client.get('/genes/pan_immune', content_type='html/text')
 		self.assertEqual(response.status_code,200)
 
+	# Ensure cell_type_specific loads without errors
 	def test_cell_type_specific(self):
 		response = self.client.get('/genes/cell_type_specific', content_type='html/text')
 		self.assertEqual(response.status_code,200)
