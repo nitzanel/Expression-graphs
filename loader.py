@@ -98,9 +98,7 @@ class Loader():
 		for cell in cells:
 			for item in cells_types:
 				if item.upper() in cell.upper().split('_'):
-					print item
 					cells_names.append(cell)
-		print cells_names
 		return cells_names
 
 	# input:
@@ -176,20 +174,14 @@ class Loader():
 	def loadSheet(self,workbook_name): 
 		if workbook_name not in self.worksheets:
 			# load the sheet into memory
-			print 'workbookname:'
-			print workbook_name
 			wb = pyxl.load_workbook(filename = workbook_name,read_only=True)
 			self.worksheets[workbook_name] = wb.worksheets[0] # could use split to take the first part of the  _
-		else:
-			print 'alrdy loadeed'		
-
 	# takes a sheet, loads the gene column into a dictionary.
 	def loadNames(self,sheet):
 		self.rows_dict = {}
 		for index, row in enumerate(sheet.get_squared_range(min_col=2,max_col=2,min_row=2,max_row=sheet.max_row)):
 			for cell in row:
 				self.rows_dict[cell.value] = index + 2
-		print 'called loadNames'
 		self.indexed = True
 		return self.rows_dict
 
@@ -205,8 +197,6 @@ class Loader():
 	def loadRow(self,gene_name,sheet):
 		row_index = self.findRowMatch(gene_name)
 		row_data = []
-		print 'this is the sheet'
-		print sheet
 		current_sheet = self.worksheets[sheet]
 		for row in current_sheet.get_squared_range(min_col = 1,max_col = current_sheet.max_column,min_row=row_index,max_row=row_index):
 			for cell in row:
@@ -247,8 +237,6 @@ class Loader():
 	def loadGenes(self,genes_list,data_sets):
 		data_sets_dict = {}
 		for data_set in data_sets:
-			print 'this is the data set'
-			print data_set
 			self.loadSheet(data_set) 
 			genes_dict = {}
 			genes_dict['head'] = self.loadHead(data_set)

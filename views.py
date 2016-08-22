@@ -15,7 +15,6 @@ bad_names = ['',' ']
 
 def get_static_url(filedir):
 	file = ''
-	print filedir
 	if filedir.startswith('static'):
 		file = filedir.split('static/')[1]
 	else:
@@ -160,7 +159,6 @@ class Cell_Type_Specific(flask.views.MethodView):
 		graph.y_title = 'expression level log2'
 		graphs_data = []
 		graphs_data.append(graph.render_data_uri())
-		print data
 		return flask.render_template('cell_type_specific.html',form=form,data=data,graphs_data=graphs_data)
 
 class Pan_Immune(flask.views.MethodView):
