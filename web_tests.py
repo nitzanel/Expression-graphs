@@ -19,6 +19,7 @@ class BaseTestCase(unittest.TestCase):
 	def tearDown(self):
 		pass
 
+
 class FlaskTestCase(BaseTestCase):
 	# Ensure about loads without errors 
 	def test_about(self):
@@ -34,6 +35,7 @@ class FlaskTestCase(BaseTestCase):
 	def test_cell_type_specific(self):
 		response = self.client.get('/genes/cell_type_specific', content_type='html/text')
 		self.assertEqual(response.status_code,200)
+
 
 class GraphTestCase(BaseTestCase):
 	# Ensure a post request in pan_immune works for a known gene symbol

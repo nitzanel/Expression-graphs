@@ -85,7 +85,7 @@ def get_dots_labels(values):
 
 class Main(flask.views.MethodView):
 	def get(self):
-		return flask.render_template('home.html')
+		return flask.render_template('homepage.html')
 	def post(self):
 		#def say_hi(obj_response):
 		#	obj_response.alert('Hello')
@@ -94,7 +94,7 @@ class Main(flask.views.MethodView):
 		#	flask.g.sijax.register_callback('say_hi',say_hi)
 		#	print 'sijax request'
 		#	return flask.g.sijax.process_request()
-		return flask.render_template('home.html')
+		return flask.render_template('homepage.html')
 
 class Homepage(flask.views.MethodView):
 	def get(self):
@@ -128,12 +128,12 @@ class Cell_Type_Specific(flask.views.MethodView):
 
 		cell_type = flask.request.form['cell_type']
 
-		if gene_name == '-':
+		if gene_name == '-' or '"' in gene_name or "'" in gene_name :
 			flask.flash('Symbol no valid.')
 			return flask.render_template('cell_type_specific.html',form=form)
 
 		data = grapher.new_bar_plot(gene_name,cell_type)
-			
+
 		if data == -1:
 			flask.flash('Gene not found.')
 			return flask.render_template('cell_type_specific.html',form=form)		
@@ -168,7 +168,8 @@ class Pan_Immune(flask.views.MethodView):
 	def post(self):
 		form = forms.GeneSearchForm()
 		gene_name = flask.request.form['gene_name'].upper()
-		if gene_name == '-':
+		
+		if gene_name == '-' or '"' in gene_name or "'" in gene_name :
 			flask.flash('Symbol not valid.')	
 			return flask.render_template('pan_immune.html',form=form)			
 

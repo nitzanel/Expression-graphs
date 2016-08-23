@@ -1,8 +1,7 @@
 {% extends 'homepage.html' %}
 {% block body %}
-	<p>this is the cell type specific page</p>
 	<div class='search'>
-		<h1> Search Gene</h1>
+		<h1> Expression level of gene in specific cell </h1>
 		<form action="{{ url_for('cell_type_specific') }}" method="post" id="search_gene">
 			{{ form.hidden_tag() }}
 			<p>
