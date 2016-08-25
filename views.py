@@ -8,6 +8,7 @@ import pygal
 from pygal.style import LightenStyle
 import styles
 import numpy as np
+import random
 
 grapher = grapher.Grapher()
 
@@ -138,8 +139,12 @@ class Cell_Type_Specific(flask.views.MethodView):
 			flask.flash('Gene not found.')
 			return flask.render_template('cell_type_specific.html',form=form)		
 
-		graph = pygal.Bar()
-
+		graph = pygal.Histogram(show_x_labels=False,show_y_guides=False)
+		male_data = []
+		female_data = []
+		female_names = []
+		male_names = []
+		width = 1
 		for data_set in data:
 			for data_tuple_key in data[data_set]:
 				current_data = data[data_set][data_tuple_key]
@@ -148,13 +153,67 @@ class Cell_Type_Specific(flask.views.MethodView):
 
 				for tup in current_data:
 					exp_level = float(tup[1])
-					parts = tup[0].split('_')
-					if 'M' in parts or 'male' in parts:
-						exp_males.append(exp_level)
-					elif 'M' in parts or 'female' in parts:
-						exp_females.append(exp_level)
-				graph.add(' '.join(['males',data_set,data_tuple_key]),exp_males)
-				graph.add(' '.join(['females',data_set,data_tuple_key]),exp_females)
+					if exp_level != 0:
+						parts = tup[0].split('_')
+						if 'M' in parts or 'male' in parts:
+							exp_males.append(exp_level)
+						elif 'M' in parts or 'female' in parts:
+							exp_females.append(exp_level)
+ 
+				male_data.append(exp_males)
+				female_data.append(exp_females)
+				male_names.append(' '.join(['males',data_set,data_tuple_key]))
+				female_names.append(' '.join(['females',data_set,data_tuple_key]))
+				#graph.add(' '.join(['males',data_set,data_tuple_key]),exp_males)
+				#graph.add(' '.join(['females',data_set,data_tuple_key]),exp_females)
+		male_bars = []
+		female_bars = []
+		x_counter = 0
+
+		def set_bars_color(tup_list,color_type = ''):
+			r = lambda: random.randint(0,80)
+			if color_type == 'red':
+				color = '#EE%02X%02X' % (r(),r())
+			elif color_type == 'blue':
+				color = '#%02X%02XEE' % (r(),r())
+			elif color_type == 'green':
+				color = '#%02XEE%02X' % (r(),r())
+			else:
+				color = '#%02X%02X%02X' % (r(),r(),r())
+			colored_bars = []
+			for tup in tup_list:
+				colored_bars.append({'value':tup,'color':color})
+			return colored_bars
+
+		for exp_data in male_data:
+			# a function that embed colors in the graphs.
+
+
+			bars_data = []
+			for value in exp_data:
+				bars_data.append((value,x_counter,x_counter + width))
+				x_counter += width
+			bars_data = set_bars_color(bars_data,'blue')
+			male_bars.append(bars_data)
+
+		x_counter += width
+		
+		for exp_data in female_data:
+			bars_data = []
+			for value in exp_data:
+				bars_data.append((value,x_counter,x_counter + width))
+				x_counter += width
+			
+			bars_data = set_bars_color(bars_data,'red')
+			female_bars.append(bars_data)
+
+		for name, bars in zip(male_names,male_bars):
+			graph.add(name,bars)
+		for name, bars in zip(female_names,female_bars):
+			graph.add(name,bars)
+
+
+
 		graph.title = ' '.join([gene_name,'expression level in',cell_type])
 		graph.y_title = 'expression level log2'
 		graphs_data = []
