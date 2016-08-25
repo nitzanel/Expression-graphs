@@ -47,6 +47,8 @@ class Loader():
 	# value: the value of the condition.
 	# dataset: the table name.
 	# cells: a cell type, if the value is ALL, will select all columns. default to ALL
+	# output:
+	# A query command according to input.
 	def get_select_command(self,value,dataset,cells='ALL',condition='gene_name'):
 		if cells == 'ALL':
 			cells = '*'	
