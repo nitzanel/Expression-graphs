@@ -5,7 +5,7 @@ import os
 import functools
 #import flask_sijax
 import pygal
-from pygal.style import LightenStyle
+from pygal.style import LightenStyle, SaturateStyle
 import styles
 import numpy as np
 import random
@@ -139,7 +139,6 @@ class Cell_Type_Specific(flask.views.MethodView):
 			flask.flash('Gene not found.')
 			return flask.render_template('cell_type_specific.html',form=form)		
 
-		graph = pygal.Histogram(show_x_labels=False,show_y_guides=False)
 		male_data = []
 		female_data = []
 		female_names = []
@@ -153,7 +152,8 @@ class Cell_Type_Specific(flask.views.MethodView):
 
 				for tup in current_data:
 					exp_level = float(tup[1])
-					if exp_level != 0:
+					#if exp_level != 0:
+					if True:
 						parts = tup[0].split('_')
 						if 'M' in parts or 'male' in parts:
 							exp_males.append(exp_level)
@@ -207,17 +207,43 @@ class Cell_Type_Specific(flask.views.MethodView):
 			bars_data = set_bars_color(bars_data,'red')
 			female_bars.append(bars_data)
 
+
+		graph = pygal.Histogram(show_x_labels=False,show_y_guides=False,legend_at_bottom=True)
+
+
 		for name, bars in zip(male_names,male_bars):
 			graph.add(name,bars)
 		for name, bars in zip(female_names,female_bars):
 			graph.add(name,bars)
 
-
-
 		graph.title = ' '.join([gene_name,'expression level in',cell_type])
 		graph.y_title = 'expression level log2'
 		graphs_data = []
 		graphs_data.append(graph.render_data_uri())
+
+		red_style = LightenStyle('#%02X%02X%02X' % (150,0,0))
+		blue_style = LightenStyle('#%02X%02X%02X' % (20,25,80))
+
+		# bar graphs for each:
+		graph = pygal.Histogram(show_x_labels=False,show_y_guides=False,style=blue_style,legend_at_bottom=True)
+		for name,bars in zip(male_names,male_bars):
+			new_bars = []
+			for bar in bars:
+				new_bars.append(bar['value'])
+			graph.add(name,new_bars)
+		graph.title = 'male graph'
+		graphs_data.append(graph.render_data_uri())
+
+		graph = pygal.Histogram(show_x_labels=False,show_y_guides=False,style=red_style,legend_at_bottom=True)
+		for name,bars in zip(female_names,female_bars):
+			new_bars = []
+			for bar in bars:
+				new_bars.append(bar['value'])
+			graph.add(name,new_bars)
+		graph.title = 'female graph'
+		graphs_data.append(graph.render_data_uri())
+
+
 		return flask.render_template('cell_type_specific.html',form=form,data=data,graphs_data=graphs_data)
 
 class Pan_Immune(flask.views.MethodView):
