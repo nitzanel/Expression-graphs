@@ -14,6 +14,11 @@ grapher = grapher.Grapher()
 
 bad_names = ['',' ']
 
+# return all the gene symbols in a list.
+def auto_complete():
+	genes = [line.strip('\n') for line in open('database/genes.txt','r')]
+	return genes	
+
 def get_static_url(filedir):
 	file = ''
 	if filedir.startswith('static'):
@@ -120,24 +125,25 @@ class Login(flask.views.MethodView):
 class Cell_Type_Specific(flask.views.MethodView):
 	def get(self):
 		form = forms.CellTypeSpecificForm()
-		return flask.render_template('cell_type_specific.html',form=form)
+		genes = auto_complete()
+		return flask.render_template('cell_type_specific.html',form=form,genes=genes)
 
 	def post(self):
 		form = forms.CellTypeSpecificForm()
 		gene_name = flask.request.form['gene_name']
 		gene_name = gene_name.upper()
-
+		genes = auto_complete()
 		cell_type = flask.request.form['cell_type']
 
 		if gene_name == '-' or '"' in gene_name or "'" in gene_name :
 			flask.flash('Symbol no valid.')
-			return flask.render_template('cell_type_specific.html',form=form)
+			return flask.render_template('cell_type_specific.html',form=form,genes=genes)
 
 		data = grapher.new_bar_plot(gene_name,cell_type)
 
 		if data == -1:
 			flask.flash('Gene not found.')
-			return flask.render_template('cell_type_specific.html',form=form)		
+			return flask.render_template('cell_type_specific.html',form=form,genes=genes)		
 
 		male_data = []
 		female_data = []
@@ -243,27 +249,27 @@ class Cell_Type_Specific(flask.views.MethodView):
 		graph.title = 'female graph'
 		graphs_data.append(graph.render_data_uri())
 
-
-		return flask.render_template('cell_type_specific.html',form=form,data=data,graphs_data=graphs_data)
+		return flask.render_template('cell_type_specific.html',form=form,data=data,graphs_data=graphs_data,genes=genes)
 
 class Pan_Immune(flask.views.MethodView):
 	def get(self):
 		form = forms.GeneSearchForm()
-		return flask.render_template('pan_immune.html',form=form)
+		genes = auto_complete()
+		return flask.render_template('pan_immune.html',form=form,genes=genes)
 	def post(self):
 		form = forms.GeneSearchForm()
 		gene_name = flask.request.form['gene_name'].upper()
-		
+		genes = auto_complete()
 		if gene_name == '-' or '"' in gene_name or "'" in gene_name :
 			flask.flash('Symbol not valid.')	
-			return flask.render_template('pan_immune.html',form=form)			
+			return flask.render_template('pan_immune.html',form=form,genes=genes)			
 
 		data = grapher.new_plot(gene_name)
 		# if there is no data, there is no gene with this symbol. alert the user.
 
 		if data == -1:
 			flask.flash('Gene not found.')	
-			return flask.render_template('pan_immune.html',form=form)			
+			return flask.render_template('pan_immune.html',form=form,genes=genes)			
 		
 		graphs = []
 		for data_set in data:		
@@ -310,7 +316,7 @@ class Pan_Immune(flask.views.MethodView):
 				graph.add('Male',males_data)
 				graph.x_labels = x_labels
 				graphs.append(graph.render_data_uri())
-		return flask.render_template('pan_immune.html',form=form,graphs=graphs)
+		return flask.render_template('pan_immune.html',form=form,graphs=graphs,genes=genes)
 """
 			current_data = list(data[data_set][0])
 			row_data = current_data[5:]

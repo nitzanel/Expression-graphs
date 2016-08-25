@@ -26,6 +26,11 @@ header a:hover{
 	color: white;
 }
 
+input::-webkit-calendar-picker-indicator {
+  display: none;
+}
+
+
 .active{
 	background: #d66a00;
 	border: 1px solid #d66a00;

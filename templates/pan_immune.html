@@ -5,7 +5,13 @@
 		<form action="{{ url_for('pan_immune') }}" method="post" id="search_gene">
 			<p>
 				Type the gene symbol to see its expression levels in mice immune cells:<br>
-				{{ form.gene_name }}				
+				{{ form.gene_name(list="genes_datalist") }}
+				<datalist id="genes_datalist" >
+				{% for gene in genes %}
+				<option value={{ gene }}></option>
+				{% endfor %}
+				</datalist>
+				<br>				
 			</p>
 			<p><input type="submit" name="search"></p>
 		</form>
