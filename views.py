@@ -237,7 +237,9 @@ class Cell_Type_Specific(flask.views.MethodView):
 			for bar in bars:
 				new_bars.append(bar['value'])
 			graph.add(name,new_bars)
-		graph.title = 'male graph'
+		graph.title = ' '.join([gene_name, 'expression level in male',cell_type])
+		graph.y_title = 'expression level log2'
+
 		graphs_data.append(graph.render_data_uri())
 
 		graph = pygal.Histogram(show_x_labels=False,show_y_guides=False,style=red_style,legend_at_bottom=True)
@@ -246,7 +248,8 @@ class Cell_Type_Specific(flask.views.MethodView):
 			for bar in bars:
 				new_bars.append(bar['value'])
 			graph.add(name,new_bars)
-		graph.title = 'female graph'
+		graph.title = ' '.join([gene_name, 'expression level in female',cell_type])
+		graph.y_title = 'expression level log2'
 		graphs_data.append(graph.render_data_uri())
 
 		return flask.render_template('cell_type_specific.html',form=form,data=data,graphs_data=graphs_data,genes=genes)
@@ -317,77 +320,3 @@ class Pan_Immune(flask.views.MethodView):
 				graph.x_labels = x_labels
 				graphs.append(graph.render_data_uri())
 		return flask.render_template('pan_immune.html',form=form,graphs=graphs,genes=genes)
-"""
-			current_data = list(data[data_set][0])
-			row_data = current_data[5:]
-			new_data = []
-			for val in row_data:
-				new_data.append(float(val))
-			row_data = new_data
-			graph = pygal.XY(stroke=False,show_y_guides=False,truncate_label=-1, dots_size=5)
-			x_index = np.arange(len(row_data))
-			xy_list = zip(x_index,row_data)
-			xy_female = xy_list[::2]
-			xy_male = xy_list[1::2]
-			graph.title = ' '.join([gene_name,'exp level dataset:',data_set,'rep:',str('test')])
-			graph.y_title = 'exp level log2' 
-			graph.add('Female',xy_female)
-			graph.add('Male',xy_male)
-			graphs.append(graph.render_data_uri())
-			xy_data = [xy_male,xy_female]	
-		return flask.render_template('pan_immune.html',form=form,data=data,graphs=graphs)
-"""
-"""
-class Pan_Immune_old(flask.views.MethodView):
-	def get(self):
-		form = forms.GeneSearchForm()
-		return flask.render_template('pan_immune.html',form=form)
-		
-	def post(self):
-		form = forms.GeneSearchForm()
-		gene_name = flask.request.form['gene_name']
-		#data_set = flask.request.form['data_sets']
-		gene_name = gene_name.upper()
-		if gene_name in bad_names or gene_name.startswith(' '):
-			flask.flash('Please enter a gene name.')
-			return flask.render_template('pan_immune.html',form=form)
-		filedirs = grapher.scatter_plot(gene_name)
-		
-		if filedirs == -1:
-			flask.flash('Gene not found.')
-		#	flask.flash_message(filedirs)
-			return flask.render_template('pan_immune.html',form=form)
-
-		some_data = filedirs
-		#some_data = filedirs[1]
-		#filedirs = filedirs[0]
-
-
-		graphs_data = []
-		for dic in some_data:
-			# create a graph for each dict of data
-			graph = pygal.XY(stroke=False,show_y_guides=False,truncate_label=-1, dots_size=5)
-			graph.title = dic['title']
-			graph.y_title = 'Expression level log2'
-			x_labels = get_x_labels(dic['x_index'],dic['x_labels'])
-			female_xy =get_dots_labels(zip(dic['x_female'],dic['female_data']))
-			male_xy = zip(dic['x_male'],dic['male_data'])
-			graph.add('Female',female_xy)
-			graph.add('Male',male_xy)
-			graph.x_labels = x_labels
-			#graph.x_labels = 'a','c','sd'
-			graphs_data.append(graph.render_data_uri())
-		
-		#files_list = []
-		#if data_set == 'All':
-		#for filedir in filedirs:
-		#	file = get_static_url(filedir)
-		#	files_list.append(file)
-		#else:
-		#	for filedir in filedirs:
-		#		if filedir.split('_')[1] == data_set:
-		#			file = get_static_url(filedir)
-		#			files_list.append(file)
-					#flask.flash(filedir) was once legacy hack.
-		return flask.render_template('pan_immune.html',form=form,super_graphs=graphs_data)
-"""
