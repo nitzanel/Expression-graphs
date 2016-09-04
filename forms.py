@@ -10,5 +10,7 @@ class CellTypeSpecificForm(Form):
 	cell_type = SelectField('cell',choices=[('GN','GN'),('MF','MF'),('DC','DC'),('B1ab','B1ab'),('CD19','CD19'),('NK','NK'),('T8','T8'),('T4','T4'),('Treg','Treg'),('NKT','NKT'),('Tgd','Tgd')])
 
 class LoginForm(Form):
-    openid = StringField('openid', validators=[DataRequired()])
-    remember_me = BooleanField('remember_me', default=False)
+    login_name = StringField('login_naame', validators=[DataRequired()])
+    login_password = StringField('login_password', validators =[DataRequired()])
+    #remember_me = BooleanField('remember_me', default=False)
+

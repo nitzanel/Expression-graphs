@@ -91,7 +91,8 @@ def get_dots_labels(values):
 
 class Main(flask.views.MethodView):
 	def get(self):
-		return flask.render_template('homepage.html')
+		#return flask.render_template('homepage.html')
+		return flask.redirect(flask.url_for('pan_immune'))
 	def post(self):
 		#def say_hi(obj_response):
 		#	obj_response.alert('Hello')
@@ -100,20 +101,23 @@ class Main(flask.views.MethodView):
 		#	flask.g.sijax.register_callback('say_hi',say_hi)
 		#	print 'sijax request'
 		#	return flask.g.sijax.process_request()
-		return flask.render_template('homepage.html')
+		
+		#return flask.render_template('homepage.html')
+		print 'someone post to main?'
+		return flask.redirect(flask.url_for('pan_immune'))		
 
 class Homepage(flask.views.MethodView):
 	def get(self):
-		return flask.render_template('homepage.html')
-
+		#return flask.render_template('homepage.html')
+		return flask.redirect(flask.url_for('pan_immune'))
 class About(flask.views.MethodView):
 	def get(self):
 		return flask.render_template('about.html')
 
 class Genes(flask.views.MethodView):
 	def get(self):
-		return flask.render_template('genes.html')
-
+		#return flask.render_template('genes.html')
+		return flask.redirect(flask.url_for('pan_immune'))
 class Login(flask.views.MethodView):
 	def get(self):
 		form = forms.LoginForm()
