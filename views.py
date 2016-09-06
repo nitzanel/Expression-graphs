@@ -18,7 +18,9 @@ bad_names = ['',' ']
 def auto_complete():
 	genes = [line.strip('\n') for line in open('database/genes.txt','r')]
 	return genes	
-
+# returns a static url for a file in a subdirectory of the static folder.
+# input:
+# filedir - a string of the file path from the static folder.
 def get_static_url(filedir):
 	file = ''
 	if filedir.startswith('static'):
@@ -26,7 +28,10 @@ def get_static_url(filedir):
 	else:
 		file = filedir
 	return flask.url_for('static',filename=file)
-
+# returns a list of dictionarys, each one representing a value with a label.
+# input: 
+# x_labels - a list of labels.
+# x_index - a list of x values.
 def get_x_labels(x_index,x_labels):
 	labels_list = []
 	for x,label in zip(x_index,x_labels):
@@ -35,6 +40,8 @@ def get_x_labels(x_index,x_labels):
 	return x_labels_tuple
 
 # arrange bars on the x axis
+# input:
+# data - a dictionary of lists of bars data
 def get_bars_values(data):
 	arranged_data = {}
 
@@ -65,10 +72,13 @@ def get_bars_values(data):
 	values = {'data':arranged_data,'x_labels': x_labels}
 	return values
 
-
+# unfinished - legacy
 def get_bar_label(key,vals):
 	pass
 
+# arrnages data for graphs - legacy
+# input:
+# data - a  dictionary of lists of male and female data
 def arrange_data(data):
 	if data == -1:
 		return -1
@@ -83,12 +93,18 @@ def arrange_data(data):
 
 	return arranged_data
 
+# returns a tuple of point data with label, tooltip, and xy position. - legacy
+# input:
+# values - a list of xy tuples
 def get_dots_labels(values):
 	labels = []
 	for xy in values:
 		labels.append({'label':'test','tooltip':'tooltip','value':(1,xy[1])})
 	return tuple(labels)
 
+# The Main view
+# at the moment is redirects to pan_immune page.
+# has a post method for legacy AJAX
 class Main(flask.views.MethodView):
 	def get(self):
 		#return flask.render_template('homepage.html')
@@ -106,18 +122,34 @@ class Main(flask.views.MethodView):
 		print 'someone post to main?'
 		return flask.redirect(flask.url_for('pan_immune'))		
 
+
+# Homepage view
+# redirect to pan_immune page.
 class Homepage(flask.views.MethodView):
 	def get(self):
 		#return flask.render_template('homepage.html')
 		return flask.redirect(flask.url_for('pan_immune'))
+
+
+# About view
+# Displays information about the site.
 class About(flask.views.MethodView):
 	def get(self):
 		return flask.render_template('about.html')
 
+
+# Genes view
+# shows links to pan_immune and cell_type_specific.
+# should be removed probably.
 class Genes(flask.views.MethodView):
 	def get(self):
 		#return flask.render_template('genes.html')
 		return flask.redirect(flask.url_for('pan_immune'))
+
+
+# Login view
+# allows admin to login to the site.
+# currently does nothing and just redirect to Homepage
 class Login(flask.views.MethodView):
 	def get(self):
 		form = forms.LoginForm()
@@ -126,6 +158,9 @@ class Login(flask.views.MethodView):
 		return flask.redirect(flask.url_for('home'))
 
 
+# Cell_Type_Specific view
+# search genes and cells for expression level graphs.
+# post method to submit forms and return the data.
 class Cell_Type_Specific(flask.views.MethodView):
 	def get(self):
 		form = forms.CellTypeSpecificForm()
@@ -258,6 +293,8 @@ class Cell_Type_Specific(flask.views.MethodView):
 
 		return flask.render_template('cell_type_specific.html',form=form,data=data,graphs_data=graphs_data,genes=genes)
 
+# Pan_Immune view
+# Search for genes and see expression levels graphs for each gene in every dataset for all cells.
 class Pan_Immune(flask.views.MethodView):
 	def get(self):
 		form = forms.GeneSearchForm()
