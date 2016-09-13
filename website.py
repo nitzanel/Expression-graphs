@@ -3,7 +3,7 @@ import views
 import forms
 import flask, flask.views
 import os
-#import flask_sijax
+import flask_sijax
 import functools
 import pygal
 
@@ -11,10 +11,11 @@ class FlaskApp:
 
 	def __init__(self):
 		path = os.path.join('.', os.path.dirname(__file__), 'static/js/sijax/')
-		
 		self.app = flask.Flask(__name__.split('.')[0])
+		self.app.config['SIJAX_STATIC_PATH'] = path
+		self.app.config['SIJAX_JSON_URI'] = '/static/js/sijax/json2.js'
 		self.app.secret_key = os.urandom(128)
-
+		flask_sijax.Sijax(self.app)
 		""" SET URL RULES """
 		self.app.add_url_rule('/',
 				view_func=views.Main.as_view('home'),
@@ -37,6 +38,10 @@ class FlaskApp:
 		self.app.add_url_rule('/homepage',
 				view_func=views.Homepage.as_view('homepage'),
 				methods=['GET'])
+		self.app.add_url_rule('/sijax_test',
+				view_func=views.SijaxTest.as_view('sijax_test'),
+				methods=['GET','POST'])
+
 
 	def run_debug(self):
 		self.app.run(debug=True)

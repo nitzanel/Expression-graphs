@@ -3,7 +3,7 @@ import forms
 import flask, flask.views
 import os
 import functools
-#import flask_sijax
+import flask_sijax
 import pygal
 from pygal.style import LightenStyle, SaturateStyle
 import styles
@@ -129,6 +129,21 @@ class Homepage(flask.views.MethodView):
 	def get(self):
 		#return flask.render_template('homepage.html')
 		return flask.redirect(flask.url_for('pan_immune'))
+
+# testing sijax ajax with flask.
+class SijaxTest(flask.views.MethodView):
+	def get(self):
+		return flask.render_template('sijax_test.html')
+
+	def post(self):
+		def testing(obj_response):
+			obj_response.alert('Click registerd')
+		if flask.g.sijax.is_sijax_request:
+			flask.g.sijax.register_callbacK('testing',testing)
+			print 'sijax request'
+			return flask.g.sijax.process_request()
+		print 'post'
+		return flask.render_template('sijax_test.html')
 
 
 # About view
