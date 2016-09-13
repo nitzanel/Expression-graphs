@@ -139,7 +139,7 @@ class SijaxTest(flask.views.MethodView):
 		def testing(obj_response):
 			obj_response.alert('Click registerd')
 		if flask.g.sijax.is_sijax_request:
-			flask.g.sijax.register_callbacK('testing',testing)
+			flask.g.sijax.register_callback('testing',testing)
 			print 'sijax request'
 			return flask.g.sijax.process_request()
 		print 'post'
