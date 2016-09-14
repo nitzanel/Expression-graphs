@@ -133,9 +133,11 @@ class Homepage(flask.views.MethodView):
 # testing sijax ajax with flask.
 class SijaxTest(flask.views.MethodView):
 	def get(self):
-		return flask.render_template('sijax_test.html')
+		form = forms.GeneSearchForm()
+		return flask.render_template('sijax_test.html',form=form)
 
 	def post(self):
+		form = forms.GeneSearchForm()
 		def testing(obj_response):
 			obj_response.alert('Click registerd')
 		if flask.g.sijax.is_sijax_request:
@@ -143,7 +145,7 @@ class SijaxTest(flask.views.MethodView):
 			print 'sijax request'
 			return flask.g.sijax.process_request()
 		print 'post'
-		return flask.render_template('sijax_test.html')
+		return flask.render_template('sijax_test.html',form=form)
 
 
 # About view
@@ -316,6 +318,13 @@ class Pan_Immune(flask.views.MethodView):
 		genes = auto_complete()
 		return flask.render_template('pan_immune.html',form=form,genes=genes)
 	def post(self):
+		def testing(obj_response, value):
+			print value
+			obj_response.alert('Good')
+			
+		if flask.g.sijax.is_sijax_request:
+			flask.g.sijax.register_callback('testing',testing)
+			return flask.g.sijax.process_request()
 		form = forms.GeneSearchForm()
 		gene_name = flask.request.form['gene_name'].upper()
 		genes = auto_complete()

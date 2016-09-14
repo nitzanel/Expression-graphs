@@ -3,7 +3,7 @@ from wtforms import StringField, BooleanField, SelectField
 from wtforms.validators import DataRequired
 
 class GeneSearchForm(Form):
-	gene_name = StringField('gene_symbol',validators=[DataRequired()],render_kw={'placeholder':'Enter gene symbol'})
+	gene_name = StringField('gene_symbol',validators=[DataRequired()],render_kw={'placeholder':'Enter gene symbol','href':"javascript://",'onkeypress':"Sijax.request('testing',[$('#gene_name').attr('value')]);"})
 
 class CellTypeSpecificForm(Form):
 	gene_name = StringField('gene_symbol',validators=[DataRequired()])
