@@ -26,9 +26,11 @@ class Loader():
 			self.conn.close()
 			print 'closed',self.db_name
 			self.is_open = False
+	
+	# autocomplete from sqlite database
 	def autocomplete(self, gene_symbol):
 		self.setup()
-		query = ''.join(["SELECT gene_name from Female_Male_exp_levels_log2 WHERE gene_name LIKE '%",gene_symbol,"%'"," LIMIT 20"])
+		query = ''.join(["SELECT gene_name from Female_Male_exp_levels_log2 WHERE gene_name LIKE '",gene_symbol,"%'"," LIMIT 20"])
 		cursor = self.conn.execute(query)
 		names = list(set(list(map(lambda x:x[0], cursor.fetchall()))))
 		return names		

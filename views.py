@@ -15,7 +15,7 @@ grapher = grapher.Grapher()
 bad_names = ['',' ']
 
 # return all the gene symbols in a list.
-def auto_complete():
+def auto_complete_from_file():
 	genes = [line.strip('\n') for line in open('database/genes.txt','r')]
 	return genes	
 # returns a static url for a file in a subdirectory of the static folder.
@@ -163,7 +163,15 @@ class Genes(flask.views.MethodView):
 		#return flask.render_template('genes.html')
 		return flask.redirect(flask.url_for('pan_immune'))
 
+class ACHandler(object):
+	def __init__(self):
+		self.last_value = ''
+		self.last_options = []
+	def change_last(self,value,options):
+		self.last_value = value
+		self.last_options = options
 
+ac_handler = ACHandler()
 # Login view
 # allows admin to login to the site.
 # currently does nothing and just redirect to Homepage
@@ -181,25 +189,44 @@ class Login(flask.views.MethodView):
 class Cell_Type_Specific(flask.views.MethodView):
 	def get(self):
 		form = forms.CellTypeSpecificForm()
-		genes = auto_complete()
-		return flask.render_template('cell_type_specific.html',form=form,genes=genes)
+		return flask.render_template('cell_type_specific.html',form=form)
 
 	def post(self):
+		def autocomplete(obj_response, value):
+			print 'got request'
+			if len(value) < 1:
+				return
+			options = []
+			if ac_handler.last_value == value:
+				return
+			else:
+				options = grapher.autocomplete(value)
+				options = list(map(create_tag, options))
+				ac_handler.change_last(value,options)
+			# fill options according to value
+			# create a list of tags
+			# add autocomplete options, and clear the previous ones.
+			obj_response.html('#genes_datalist','')
+			obj_response.html_append('#genes_datalist',''.join(options))	
+			print options		
+		if flask.g.sijax.is_sijax_request:
+			print flask.g.sijax.get_js()
+			flask.g.sijax.register_callback('autocomplete',autocomplete)
+			flask.g.sijax.process_request()
 		form = forms.CellTypeSpecificForm()
-		gene_name = flask.request.form['gene_name']
+		gene_name = flask.request.form['gene_name']	
 		gene_name = gene_name.upper()
-		genes = auto_complete()
 		cell_type = flask.request.form['cell_type']
 
 		if gene_name == '-' or '"' in gene_name or "'" in gene_name :
 			flask.flash('Symbol no valid.')
-			return flask.render_template('cell_type_specific.html',form=form,genes=genes)
+			return flask.render_template('cell_type_specific.html',form=form)
 
 		data = grapher.new_bar_plot(gene_name,cell_type)
 
 		if data == -1:
 			flask.flash('Gene not found.')
-			return flask.render_template('cell_type_specific.html',form=form,genes=genes)		
+			return flask.render_template('cell_type_specific.html',form=form)		
 
 		male_data = []
 		female_data = []
@@ -308,32 +335,23 @@ class Cell_Type_Specific(flask.views.MethodView):
 		graph.y_title = 'expression level log2'
 		graphs_data.append(graph.render_data_uri())
 
-		return flask.render_template('cell_type_specific.html',form=form,data=data,graphs_data=graphs_data,genes=genes)
+		return flask.render_template('cell_type_specific.html',form=form,data=data,graphs_data=graphs_data)
 
 
 def create_tag(gene_symbol):
 	tag = ''.join(["<option value='",gene_symbol,"'></option>"])
 	return tag
 
-class ACHandler(object):
-	def __init__(self):
-		self.last_value = ''
-		self.last_options = []
-	def change_last(self,value,options):
-		self.last_value = value
-		self.last_options = options
 
-ac_handler = ACHandler()
 # Pan_Immune view
 # Search for genes and see expression levels graphs for each gene in every dataset for all cells.
 class Pan_Immune(flask.views.MethodView):
 	def get(self):
 		form = forms.GeneSearchForm()
-		genes = auto_complete()
-		return flask.render_template('pan_immune.html',form=form,genes=genes)
+		return flask.render_template('pan_immune.html',form=form)
 	def post(self):
-		def testing(obj_response, value):
-			if len(value) < 2:
+		def autocomplete(obj_response, value):
+			if len(value) < 1:
 				return
 			options = []
 			if ac_handler.last_value == value:
@@ -349,21 +367,20 @@ class Pan_Immune(flask.views.MethodView):
 			obj_response.html_append('#genes_datalist',''.join(options))	
 			print options		
 		if flask.g.sijax.is_sijax_request:
-			flask.g.sijax.register_callback('testing',testing)
+			flask.g.sijax.register_callback('autocomplete',autocomplete)
 			return flask.g.sijax.process_request()
 		form = forms.GeneSearchForm()
 		gene_name = flask.request.form['gene_name'].upper()
-		genes = auto_complete()
 		if gene_name == '-' or '"' in gene_name or "'" in gene_name :
 			flask.flash('Symbol not valid.')	
-			return flask.render_template('pan_immune.html',form=form,genes=genes)			
+			return flask.render_template('pan_immune.html',form=form)			
 
 		data = grapher.new_plot(gene_name)
 		# if there is no data, there is no gene with this symbol. alert the user.
 
 		if data == -1:
 			flask.flash('Gene not found.')	
-			return flask.render_template('pan_immune.html',form=form,genes=genes)			
+			return flask.render_template('pan_immune.html',form=form)			
 		
 		graphs = []
 		for data_set in data:		
@@ -410,4 +427,4 @@ class Pan_Immune(flask.views.MethodView):
 				graph.add('Male',males_data)
 				graph.x_labels = x_labels
 				graphs.append(graph.render_data_uri())
-		return flask.render_template('pan_immune.html',form=form,graphs=graphs,genes=genes)
+		return flask.render_template('pan_immune.html',form=form,graphs=graphs)

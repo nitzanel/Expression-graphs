@@ -8,9 +8,6 @@
 				Please enter gene symbol:<br>
 				{{ form.gene_name(list="genes_datalist") }}
 				<datalist id="genes_datalist" >
-				{% for gene in genes %}
-				<option value={{ gene }}></option>
-				{% endfor %}
 				</datalist>
 				<br>
 				Choose cell type <br>
