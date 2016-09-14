@@ -310,6 +310,20 @@ class Cell_Type_Specific(flask.views.MethodView):
 
 		return flask.render_template('cell_type_specific.html',form=form,data=data,graphs_data=graphs_data,genes=genes)
 
+
+def create_tag(gene_symbol):
+	tag = ''.join(["<option value='",gene_symbol,"'></option>"])
+	return tag
+
+class ACHandler(object):
+	def __init__(self):
+		self.last_value = ''
+		self.last_options = []
+	def change_last(self,value,options):
+		self.last_value = value
+		self.last_options = options
+
+ac_handler = ACHandler()
 # Pan_Immune view
 # Search for genes and see expression levels graphs for each gene in every dataset for all cells.
 class Pan_Immune(flask.views.MethodView):
@@ -319,9 +333,21 @@ class Pan_Immune(flask.views.MethodView):
 		return flask.render_template('pan_immune.html',form=form,genes=genes)
 	def post(self):
 		def testing(obj_response, value):
-			print value
-			obj_response.alert('Good')
-			
+			if len(value) < 2:
+				return
+			options = []
+			if ac_handler.last_value == value:
+				return
+			else:
+				options = grapher.autocomplete(value)
+				options = list(map(create_tag, options))
+				ac_handler.change_last(value,options)
+			# fill options according to value
+			# create a list of tags
+			# add autocomplete options, and clear the previous ones.
+			obj_response.html('#genes_datalist','')
+			obj_response.html_append('#genes_datalist',''.join(options))	
+			print options		
 		if flask.g.sijax.is_sijax_request:
 			flask.g.sijax.register_callback('testing',testing)
 			return flask.g.sijax.process_request()

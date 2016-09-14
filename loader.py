@@ -9,21 +9,30 @@ class Loader():
 		self.cellIndexed = False
 		self.db_name = 'database/db.db'
 		self.tables_names = []
+		self.is_open = False
 		for item in self.get_tables_names():
 			if 'exp' in item.split('_'):
 				self.tables_names.append(item)
-
-
+		
 	# creates sql connection with the database.
 	def setup(self):
-		self.conn = lite.connect(self.db_name)
-		print 'Opend',self.db_name
-	
+		if not self.is_open:
+			self.conn = lite.connect(self.db_name)
+			print 'Opend',self.db_name
+			self.is_open = True
 	# close sql connection.
 	def tear_down(self):
 		if self.conn:
 			self.conn.close()
 			print 'closed',self.db_name
+			self.is_open = False
+	def autocomplete(self, gene_symbol):
+		self.setup()
+		query = ''.join(["SELECT gene_name from Female_Male_exp_levels_log2 WHERE gene_name LIKE '%",gene_symbol,"%'"," LIMIT 20"])
+		cursor = self.conn.execute(query)
+		names = list(set(list(map(lambda x:x[0], cursor.fetchall()))))
+		return names		
+		
 
 	# input: table name.
 	# returns a list of columns names in a table.

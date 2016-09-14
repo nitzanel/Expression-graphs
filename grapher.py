@@ -139,6 +139,10 @@ class Grapher():
 			data_dic['male_data'] = male_data
 			some_data_dict.append(data_dic)
 		return some_data_dict
+	
+	def autocomplete(self, gene_symbol):
+		return self.loader.autocomplete(gene_symbol)
+
 
 if __name__ == '__main__':
 	# just a test to see if it works
