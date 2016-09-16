@@ -18,14 +18,14 @@ con = sqlite3.connect('db.db')
 
 cursor = con.cursor()
 cursor.execute('SELECT name FROM sqlite_master WHERE type="table";')
-alrdy_in_database = cursor.fetchall()
+database_tables = cursor.fetchall()
 tmp = []
-for name in alrdy_in_database:
+for name in database_tables:
     tmp.append(name[0])
-alrdy_in_database = tmp
+database_tables = tmp
 tmp = []
 for name in names:
-    if name.split('.')[0] not in alrdy_in_database:
+    if name.split('.')[0] not in database_tables:
         tmp.append(name)
 names = tmp
 

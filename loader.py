@@ -17,7 +17,9 @@ class Loader():
 	# creates sql connection with the database.
 	def setup(self):
 		if not self.is_open:
-			self.conn = lite.connect(self.db_name)
+			# Dangerous?
+			# probably.
+			self.conn = lite.connect(self.db_name, check_same_thread=False)
 			print 'Opend',self.db_name
 			self.is_open = True
 	# close sql connection.
@@ -30,7 +32,8 @@ class Loader():
 	# autocomplete from sqlite database
 	def autocomplete(self, gene_symbol):
 		self.setup()
-		query = ''.join(["SELECT gene_name from Female_Male_exp_levels_log2 WHERE gene_name LIKE '",gene_symbol,"%'"," LIMIT 20"])
+		# change after database update.
+		query = ''.join(["SELECT gene_name from Female_Male_exp_levels_log2 WHERE gene_name LIKE '",gene_symbol,"%'"," OR gene_name LIKE '%_",gene_symbol,"%'"," LIMIT 20"])
 		cursor = self.conn.execute(query)
 		names = list(set(list(map(lambda x:x[0], cursor.fetchall()))))
 		return names		

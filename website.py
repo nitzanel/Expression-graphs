@@ -46,10 +46,13 @@ class FlaskApp:
 	def run_debug(self):
 		self.app.run(debug=True)
 
+	def run_threaded(self):
+		self.app.run(threaded=True)
+
 	def config_app(self,params):
 		pass
 
 if __name__ == '__main__':
 	print 'starting app'
 	App = FlaskApp().app
-	App.run(debug=True)
+	App.run(threaded=True)
