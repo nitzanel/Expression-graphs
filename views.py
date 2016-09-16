@@ -182,18 +182,7 @@ class Login(flask.views.MethodView):
 	def post(self):
 		return flask.redirect(flask.url_for('home'))
 
-
-# Cell_Type_Specific view
-# search genes and cells for expression level graphs.
-# post method to submit forms and return the data.
-class Cell_Type_Specific(flask.views.MethodView):
-	def get(self):
-		form = forms.CellTypeSpecificForm()
-		return flask.render_template('cell_type_specific.html',form=form)
-
-	def post(self):
-		def autocomplete(obj_response, value):
-			print 'got request'
+def autocomplete(obj_response, value): 
 			if len(value) < 1:
 				return
 			options = []
@@ -208,7 +197,17 @@ class Cell_Type_Specific(flask.views.MethodView):
 			# add autocomplete options, and clear the previous ones.
 			obj_response.html('#genes_datalist','')
 			obj_response.html_append('#genes_datalist',''.join(options))	
-			print options		
+			print options	
+
+# Cell_Type_Specific view
+# search genes and cells for expression level graphs.
+# post method to submit forms and return the data.
+class Cell_Type_Specific(flask.views.MethodView):
+	def get(self):
+		form = forms.CellTypeSpecificForm()
+		return flask.render_template('cell_type_specific.html',form=form)
+
+	def post(self):				
 		if flask.g.sijax.is_sijax_request:
 			print flask.g.sijax.get_js()
 			flask.g.sijax.register_callback('autocomplete',autocomplete)
@@ -350,22 +349,6 @@ class Pan_Immune(flask.views.MethodView):
 		form = forms.GeneSearchForm()
 		return flask.render_template('pan_immune.html',form=form)
 	def post(self):
-		def autocomplete(obj_response, value):
-			if len(value) < 1:
-				return
-			options = []
-			if ac_handler.last_value == value:
-				return
-			else:
-				options = grapher.autocomplete(value)
-				options = list(map(create_tag, options))
-				ac_handler.change_last(value,options)
-			# fill options according to value
-			# create a list of tags
-			# add autocomplete options, and clear the previous ones.
-			obj_response.html('#genes_datalist','')
-			obj_response.html_append('#genes_datalist',''.join(options))	
-			print options		
 		if flask.g.sijax.is_sijax_request:
 			flask.g.sijax.register_callback('autocomplete',autocomplete)
 			return flask.g.sijax.process_request()
