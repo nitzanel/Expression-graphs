@@ -183,21 +183,23 @@ class Login(flask.views.MethodView):
 		return flask.redirect(flask.url_for('home'))
 
 def autocomplete(obj_response, value): 
-			if len(value) < 1:
-				return
-			options = []
-			if ac_handler.last_value == value:
-				return
-			else:
-				options = grapher.autocomplete(value)
-				options = list(map(create_tag, options))
-				ac_handler.change_last(value,options)
-			# fill options according to value
-			# create a list of tags
-			# add autocomplete options, and clear the previous ones.
-			obj_response.html('#genes_datalist','')
-			obj_response.html_append('#genes_datalist',''.join(options))	
-			print options	
+	if len(value) < 1:
+		return
+	if '"' in value or "'" in value or '?' in value or '!' in value or '%' in value or '&' in value:
+		return		
+	options = []
+	if ac_handler.last_value == value:
+		return
+	else:
+		options = grapher.autocomplete(value)
+		options = list(map(create_tag, options))
+		ac_handler.change_last(value,options)
+	# fill options according to value
+	# create a list of tags
+	# add autocomplete options, and clear the previous ones.
+	obj_response.html('#genes_datalist','')
+	obj_response.html_append('#genes_datalist',''.join(options))	
+	print options	
 
 # Cell_Type_Specific view
 # search genes and cells for expression level graphs.

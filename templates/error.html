@@ -1,0 +1,6 @@
+{% extends "homepage.html" %}
+{% block body %}
+	<div class="graphs">
+		<embed type='image/svg+xml' src = {{ graph|safe }} />
+	</div>
+{% endblock %}

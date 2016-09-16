@@ -7,7 +7,14 @@ import flask_sijax
 import functools
 import pygal
 
-class FlaskApp:
+class FlaskApp(object):
+
+
+	def create_empty_chart(self,number):
+		chart = pygal.Bar()
+		chart.title = str(number)
+		return chart.render_data_uri()
+
 
 	def __init__(self):
 		path = os.path.join('.', os.path.dirname(__file__), 'static/js/sijax/')
@@ -16,6 +23,7 @@ class FlaskApp:
 		self.app.config['SIJAX_JSON_URI'] = '/static/js/sijax/json2.js'
 		self.app.secret_key = os.urandom(128)
 		flask_sijax.Sijax(self.app)
+		
 		""" SET URL RULES """
 		self.app.add_url_rule('/',
 				view_func=views.Main.as_view('home'),
@@ -41,6 +49,37 @@ class FlaskApp:
 		self.app.add_url_rule('/sijax_test',
 				view_func=views.SijaxTest.as_view('sijax_test'),
 				methods=['GET','POST'])
+
+		""" Cool error handles """ 
+
+		@self.app.errorhandler(403)
+		def page_not_found(e):
+			chart = pygal.Bar()
+			chart.title = ''.join([str(403),' Forbidden']) 
+			graph = chart.render_data_uri()
+			return flask.render_template('error.html',graph=graph), 403
+		
+		@self.app.errorhandler(404)
+		def page_not_found(e):
+			chart = pygal.Bar()
+			chart.title = ''.join([str(404),' Not Found']) 
+			graph = chart.render_data_uri()
+			return flask.render_template('error.html',graph=graph), 404
+
+		@self.app.errorhandler(410)
+		def page_not_found(e):
+			chart = pygal.Bar()
+			chart.title = ''.join([str(410),' Gone']) 
+			graph = chart.render_data_uri()
+			return flask.render_template('error.html',graph=graph), 410
+
+		@self.app.errorhandler(500)
+		def page_not_found(e):
+			chart = pygal.Bar()
+			chart.title = ''.join([str(500),' Internal Server Error']) 
+			graph = chart.render_data_uri()
+			return flask.render_template('error.html',graph=graph), 500
+
 
 
 	def run_debug(self):
