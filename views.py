@@ -202,6 +202,8 @@ def autocomplete(obj_response, value):
 # Cell_Type_Specific view
 # search genes and cells for expression level graphs.
 # post method to submit forms and return the data.
+
+
 class Cell_Type_Specific(flask.views.MethodView):
 	def get(self):
 		form = forms.CellTypeSpecificForm()
@@ -211,7 +213,7 @@ class Cell_Type_Specific(flask.views.MethodView):
 		if flask.g.sijax.is_sijax_request:
 			print flask.g.sijax.get_js()
 			flask.g.sijax.register_callback('autocomplete',autocomplete)
-			flask.g.sijax.process_request()
+			return flask.g.sijax.process_request()
 		form = forms.CellTypeSpecificForm()
 		gene_name = flask.request.form['gene_name']	
 		gene_name = gene_name.upper()
