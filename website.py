@@ -6,6 +6,7 @@ import os
 import flask_sijax
 import functools
 import pygal
+import zipfile
 
 class FlaskApp(object):
 
@@ -17,6 +18,10 @@ class FlaskApp(object):
 
 
 	def __init__(self):
+		# extract the database
+		zfile = zipfile.ZipFile('database/db.zip')
+		zfile.extractall()
+		# configure the site.
 		path = os.path.join('.', os.path.dirname(__file__), 'static/js/sijax/')
 		self.app = flask.Flask(__name__.split('.')[0])
 		self.app.config['SIJAX_STATIC_PATH'] = path
