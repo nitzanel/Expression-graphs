@@ -20,7 +20,7 @@ class FlaskApp(object):
 	def __init__(self):
 		# extract the database
 		zfile = zipfile.ZipFile('database/db.zip')
-		zfile.extractall()
+		zfile.extractall('database')
 		# configure the site.
 		path = os.path.join('.', os.path.dirname(__file__), 'static/js/sijax/')
 		self.app = flask.Flask(__name__.split('.')[0])

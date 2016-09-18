@@ -33,7 +33,7 @@ class Loader():
 	def autocomplete(self, gene_symbol):
 		self.setup()
 		# change after database update.
-		query = ''.join(["SELECT gene_name from Female_Male_exp_levels_log2 WHERE gene_name LIKE '",gene_symbol,"%'"," OR gene_name LIKE '%_",gene_symbol,"%'"," LIMIT 20"])
+		query = ''.join(["SELECT gene_name from Female_Male_exp_levels_log2 WHERE gene_name LIKE '%",gene_symbol,"%'"," LIMIT 50"])
 		cursor = self.conn.execute(query)
 		names = list(set(list(map(lambda x:x[0], cursor.fetchall()))))
 		return names		
@@ -78,6 +78,7 @@ class Loader():
 	def get_gene(self,gene_name,datasets='ALL',cells='ALL'):
 		self.setup()
 		data = {}
+		noise_data = {}
 		if datasets == 'ALL':
 			datasets = self.tables_names
 		for dataset in datasets:
@@ -91,9 +92,18 @@ class Loader():
 				key = '_'.join(['repeat',str(index+1)])
 				data_tuples[key] = zip(colms,values)
 			data[dataset] = data_tuples
+			noise_data[dataset] = self.get_noise(gene_name,dataset)
 		self.tear_down()
-		return data
+		return data, noise_data
 
+
+	def get_noise(self, gene_name, dataset):
+		query = ''.join(['SELECT noise from ', dataset,' where gene_name = "', gene_name, '"'])
+		cursor = self.conn.execute(query)
+		data = []
+		for row in cursor:
+			data.append(list(row))
+		return data
 	# input:
 	# cell_type: the type of cell, for example: 'GN','B1a'
 	# table: the table name in the sql shema. get it from get_tables_names

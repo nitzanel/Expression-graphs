@@ -201,6 +201,16 @@ def autocomplete(obj_response, value):
 	obj_response.html_append('#genes_datalist',''.join(options))	
 	print options	
 
+# get noise message filter.
+def get_noise_message(noise_data):
+	messages = []
+	for key in noise_data:
+		for k, val in enumerate(noise_data[key]):
+			text = ' '.join(['values in',key,'repeat',str(k+1),"noise filter value",str(val[0])])
+			messages.append(text)
+	return messages
+
+
 # Cell_Type_Specific view
 # search genes and cells for expression level graphs.
 # post method to submit forms and return the data.
@@ -225,7 +235,7 @@ class Cell_Type_Specific(flask.views.MethodView):
 			flask.flash('Symbol no valid.')
 			return flask.render_template('cell_type_specific.html',form=form)
 
-		data = grapher.new_bar_plot(gene_name,cell_type)
+		data, noise_data = grapher.new_bar_plot(gene_name,cell_type)
 
 		if data == -1:
 			flask.flash('Gene not found.')
@@ -308,6 +318,8 @@ class Cell_Type_Specific(flask.views.MethodView):
 		for name, bars in zip(female_names,female_bars):
 			graph.add(name,bars)
 
+		messages = get_noise_message(noise_data)
+
 		graph.title = ' '.join([gene_name,'expression level in',cell_type])
 		graph.y_title = 'expression level log2'
 		graphs_data = []
@@ -338,7 +350,7 @@ class Cell_Type_Specific(flask.views.MethodView):
 		graph.y_title = 'expression level log2'
 		graphs_data.append(graph.render_data_uri())
 
-		return flask.render_template('cell_type_specific.html',form=form,data=data,graphs_data=graphs_data)
+		return flask.render_template('cell_type_specific.html',form=form,data=data,graphs_data=graphs_data, messages=messages)
 
 
 def create_tag(gene_symbol):
@@ -362,7 +374,7 @@ class Pan_Immune(flask.views.MethodView):
 			flask.flash('Symbol not valid.')	
 			return flask.render_template('pan_immune.html',form=form)			
 
-		data = grapher.new_plot(gene_name)
+		data, noise_data = grapher.new_plot(gene_name)
 		# if there is no data, there is no gene with this symbol. alert the user.
 
 		if data == -1:
@@ -414,4 +426,5 @@ class Pan_Immune(flask.views.MethodView):
 				graph.add('Male',males_data)
 				graph.x_labels = x_labels
 				graphs.append(graph.render_data_uri())
-		return flask.render_template('pan_immune.html',form=form,graphs=graphs)
+		messages = get_noise_message(noise_data)
+		return flask.render_template('pan_immune.html',form=form,graphs=graphs,messages=messages)

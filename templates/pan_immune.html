@@ -18,7 +18,11 @@
 			{% endfor %}
 		{% endwith %}
 		<br>
+
 	</div>
+	{% for message in messages %}
+		<p> {{ message }} </p> 
+	{% endfor %}
 	{% if data %}
 		have data!
 		{{ data }}
