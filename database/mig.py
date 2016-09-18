@@ -56,7 +56,13 @@ for name in names:
         for cell in row:
             tuprow.append(cell.value)
         tup.append(tuple(tuprow))
-
+        # if there is more then one gene here, create a duplicate using the other names. will need revisit.
+        if ',' in tup[-1][1]:
+            last_tup = list(tup.pop())
+            current_genes = last_tup[1].split(',')
+            for gene in current_genes:
+                values = [last_tup[0]] + [gene] + last_tup[2:]
+                tup.append(tuple(values))
     insQuery1 = 'INSERT INTO ' + name.split('.')[0] + '('
     insQuery2 = ''
     for col in columns:
