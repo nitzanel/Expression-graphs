@@ -2,7 +2,8 @@
 *.swp
 *.pyc
 
-
+# ignore db files.
+*.db
 
 # Windows image file caches
 Thumbs.db
