@@ -144,8 +144,6 @@ class PIGraphs(flask.views.MethodView):
 		return "{}".format(gene_name)
 # Homepage view
 # redirect to pan_immune page.
-	
-
 class Homepage(flask.views.MethodView):
 	def get(self):
 		#return flask.render_template('homepage.html')
@@ -396,7 +394,7 @@ class Pan_Immune(flask.views.MethodView):
 		if gene_name == '-' or '"' in gene_name or "'" in gene_name :
 			flask.flash('Symbol not valid.')	
 			return flask.render_template('pan_immune.html',form=form)			
-		return flask.redirect(get_ip_address(gene_name))
+		return flask.redirect(get_pi_address(gene_name))
 		data, noise_data = grapher.new_plot(gene_name)
 		# if there is no data, there is no gene with this symbol. alert the user.
 

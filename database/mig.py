@@ -4,6 +4,9 @@ to convert complete excel workbook (all sheets) to an SQLite database
 The code assumes that the first row of every sheet is the column name
 Every sheet is stored in a separate table
 The sheet name is assigned as the table name for every sheet
+
+
+Code will also change the version.txt file 
 '''
 
 import sqlite3
@@ -75,4 +78,17 @@ for name in names:
     con.executemany(insQuery,tup)
     con.commit()
 con.close()
+# create version.txt file. change the version number everytime the database chagnes.
+
+with open('version.txt','a') as f:
+	pass
+with open('version.txt','r+') as f:
+	version = f.read()
+	if version == '':
+		version = 0.0
+	else:
+	  	version = float(version)
+	f.seek(0)
+	f.write(str(version +0.1))
+	f.truncate()
 
