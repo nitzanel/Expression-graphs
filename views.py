@@ -122,9 +122,30 @@ class Main(flask.views.MethodView):
 		print 'someone post to main?'
 		return flask.redirect(flask.url_for('pan_immune'))		
 
+# return address of ctc graph
+def get_ctc_address(gene_name,cell_type):
+	return '/'.join(['/genes','cell_type_specific',gene_name,cell_type])
 
+# return address of pi graph
+def get_pi_address(gene_name):
+	return '/'.join(['/genes','pan_immune',gene_name])
+
+# the pattern based ctc graph address
+class CTCGraphs(flask.views.MethodView):
+	def get(self, gene_name, cell_type):
+		return "{} {}".format(gene_name,cell_type)
+	def post(self, gene_name, cell_type): 
+		return "{} {}".format(gene_name,cell_type)
+# the pattern based pi graph address
+class PIGraphs(flask.views.MethodView):
+	def get(self,gene_name):
+		return "{}".format(gene_name)
+	def post(self,gene_name):
+		return "{}".format(gene_name)
 # Homepage view
 # redirect to pan_immune page.
+	
+
 class Homepage(flask.views.MethodView):
 	def get(self):
 		#return flask.render_template('homepage.html')
@@ -234,13 +255,15 @@ class Cell_Type_Specific(flask.views.MethodView):
 		if gene_name == '-' or '"' in gene_name or "'" in gene_name :
 			flask.flash('Symbol no valid.')
 			return flask.render_template('cell_type_specific.html',form=form)
-
+		
+		return flask.redirect(get_ctc_address(gene_name,cell_type))	
+		
 		data, noise_data = grapher.new_bar_plot(gene_name,cell_type)
 
 		if data == -1:
 			flask.flash('Gene not found.')
 			return flask.render_template('cell_type_specific.html',form=form)		
-
+	
 		male_data = []
 		female_data = []
 		female_names = []
@@ -373,7 +396,7 @@ class Pan_Immune(flask.views.MethodView):
 		if gene_name == '-' or '"' in gene_name or "'" in gene_name :
 			flask.flash('Symbol not valid.')	
 			return flask.render_template('pan_immune.html',form=form)			
-
+		return flask.redirect(get_ip_address(gene_name))
 		data, noise_data = grapher.new_plot(gene_name)
 		# if there is no data, there is no gene with this symbol. alert the user.
 

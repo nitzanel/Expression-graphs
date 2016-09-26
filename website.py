@@ -19,14 +19,17 @@ class FlaskApp(object):
 
 	def __init__(self):
 		# extract the database
+		print "extracting database..."
 		zfile = zipfile.ZipFile('database/db.zip')
 		zfile.extractall('database')
+		print "database extracted..."
 		# configure the site.
 		path = os.path.join('.', os.path.dirname(__file__), 'static/js/sijax/')
 		self.app = flask.Flask(__name__.split('.')[0])
 		self.app.config['SIJAX_STATIC_PATH'] = path
 		self.app.config['SIJAX_JSON_URI'] = '/static/js/sijax/json2.js'
 		self.app.secret_key = os.urandom(128)
+		print "setting sijax..."
 		flask_sijax.Sijax(self.app)
 		
 		""" SET URL RULES """
@@ -55,8 +58,17 @@ class FlaskApp(object):
 				view_func=views.SijaxTest.as_view('sijax_test'),
 				methods=['GET','POST'])
 
-		""" Cool error handles """ 
+		""" some sort of a simplified REST ideas """
 
+		self.app.add_url_rule('/genes/cell_type_specific/<gene_name>/<cell_type>',
+				view_func=views.CTCGraphs.as_view('ctcgraphs'),
+				methods=['GET','POST'])
+		self.app.add_url_rule('/genes/pan_immune/<gene_name>',
+				view_func=views.PIGraphs.as_view('pigraphs'),
+				methods=['GET','POST'])
+		
+		""" Cool error handles """ 
+		
 		@self.app.errorhandler(403)
 		def page_not_found(e):
 			chart = pygal.Bar()
@@ -99,4 +111,4 @@ class FlaskApp(object):
 if __name__ == '__main__':
 	print 'starting app'
 	App = FlaskApp().app
-	App.run(threaded=True)
+	App.run(threaded=True,port=5001)
