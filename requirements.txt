@@ -3,4 +3,4 @@ Flask_Sijax==0.4.1
 openpyxl==2.3.5
 pygal==2.2.3
 WTForms==2.1
-numpy==1.11.2rc1
+flask-wtf==0.13

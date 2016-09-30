@@ -7,7 +7,6 @@ import flask_sijax
 import pygal
 from pygal.style import LightenStyle, SaturateStyle
 import styles
-import numpy as np
 import random
 
 grapher = grapher.Grapher()

@@ -145,9 +145,6 @@ class Grapher():
 
 
 if __name__ == '__main__':
-	# just a test to see if it works
-	grapher = Grapher()
-	grapher.scatter_plot(['FIRRE' ])
-	#grapher.scatter_plot('FIRRE')
+	print 'grapher file'
+	print 'please remove uneeded openpyxl usage.'
 
-	#print grapher.loader.loadGenes(['FIRRE'],['Female_Male_exp_levels_norm.xlsx'])
