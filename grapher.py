@@ -51,6 +51,14 @@ class Grapher():
 				return -1	
 		return data, noise_data
 
+	def ctc_plot(self,gene_name,cell_type,datasets = 'ALL'):
+		data, noise_data = self.loader.get_gene(gene_name=gene_name,datasets=datasets,cells=cell_type)
+		# check if the data is empty:
+		for dataset in data:
+			if data[dataset] == {}:
+				return -1	
+		return data, noise_data		
+
 	def new_plot(self,gene_name,cells='ALL'):
 		data, noise_data = self.loader.get_gene(gene_name=gene_name,datasets='ALL',cells=cells)
 		for dataset in data:

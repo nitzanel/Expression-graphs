@@ -129,18 +129,7 @@ def get_ctc_address(gene_name,cell_type):
 def get_pi_address(gene_name):
 	return '/'.join(['/genes','pan_immune',gene_name])
 
-# the pattern based ctc graph address
-class CTCGraphs(flask.views.MethodView):
-	def get(self, gene_name, cell_type):
-		return "{} {}".format(gene_name,cell_type)
-	def post(self, gene_name, cell_type): 
-		return "{} {}".format(gene_name,cell_type)
-# the pattern based pi graph address
-class PIGraphs(flask.views.MethodView):
-	def get(self,gene_name):
-		return "{}".format(gene_name)
-	def post(self,gene_name):
-		return "{}".format(gene_name)
+
 # Homepage view
 # redirect to pan_immune page.
 class Homepage(flask.views.MethodView):
@@ -229,6 +218,105 @@ def get_noise_message(noise_data):
 	return messages
 
 
+bad_symbols = ['"',"'"]
+# the pattern based ctc graph address
+class CTCGraphs(flask.views.MethodView):
+	def get(self, gene_name, cell_type):
+		form = forms.CellTypeSpecificForm()
+		# check for bad symbols in address.
+		for symbol in bad_symbols:
+			if symbol in gene_name or symbol in cell_type:
+				flask.flash('Symbol not valid.')
+				return flask.render_template('cell_type_specific.html',form=form)
+
+		data, noise_data = grapher.ctc_plot(gene_name,cell_type)
+
+
+		male_data = []
+		female_data = []
+		female_names = []
+		male_names = []
+		
+		"""
+		Code that generate graphs.
+		"""
+		for data_set in data:
+			for data_tuple_key in data[data_set]:
+				current_data = data[data_set][data_tuple_key]
+				exp_males = []
+				exp_females = []
+
+				for tup in current_data:
+					exp_level = float(tup[1])
+					#if exp_level != 0:
+					if True:
+						parts = tup[0].split('_')
+						if 'M' in parts or 'male' in parts:
+							exp_males.append(exp_level)
+						elif 'M' in parts or 'female' in parts:
+							exp_females.append(exp_level)
+ 
+				male_data.append(exp_males)
+				female_data.append(exp_females)
+				male_names.append(' '.join(['males',data_set,data_tuple_key]))
+				female_names.append(' '.join(['females',data_set,data_tuple_key]))
+				#graph.add(' '.join(['males',data_set,data_tuple_key]),exp_males)
+				#graph.add(' '.join(['females',data_set,data_tuple_key]),exp_females)
+		x_counter = 0
+
+		graph = pygal.XY(show_x_labels=False,show_y_guides=False,legend_at_bottom=True)
+
+
+		for name, bars in zip(male_names,male_bars):
+			graph.add(name,bars)
+		for name, bars in zip(female_names,female_bars):
+			graph.add(name,bars)
+
+		messages = get_noise_message(noise_data)
+
+		graph.title = ' '.join([gene_name,'expression level in',cell_type])
+		graph.y_title = 'expression level log2'
+		graphs_data = []
+		graphs_data.append(graph.render_data_uri())
+
+		red_style = LightenStyle('#%02X%02X%02X' % (150,0,0))
+		blue_style = LightenStyle('#%02X%02X%02X' % (20,25,80))
+
+		# bar graphs for each:
+		graph = pygal.Histogram(show_x_labels=False,show_y_guides=False,style=blue_style,legend_at_bottom=True)
+		for name,bars in zip(male_names,male_bars):
+			new_bars = []
+			for bar in bars:
+				new_bars.append(bar['value'])
+			graph.add(name,new_bars)
+		graph.title = ' '.join([gene_name, 'expression level in male',cell_type])
+		graph.y_title = 'expression level log2'
+
+		graphs_data.append(graph.render_data_uri())
+
+		graph = pygal.Histogram(show_x_labels=False,show_y_guides=False,style=red_style,legend_at_bottom=True)
+		for name,bars in zip(female_names,female_bars):
+			new_bars = []
+			for bar in bars:
+				new_bars.append(bar['value'])
+			graph.add(name,new_bars)
+		graph.title = ' '.join([gene_name, 'expression level in female',cell_type])
+		graph.y_title = 'expression level log2'
+		graphs_data.append(graph.render_data_uri())
+
+		return flask.render_template('cell_type_specific.html',form=form,data=data,graphs_data=graphs_data, messages=messages)
+
+
+
+		#return flask.render_template('cell_type_specific.html',form=form)
+	def post(self, gene_name, cell_type): 
+		return "{} {}".format(gene_name,cell_type)
+# the pattern based pi graph address
+class PIGraphs(flask.views.MethodView):
+	def get(self,gene_name):
+		return "{}".format(gene_name)
+	def post(self,gene_name):
+		return "{}".format(gene_name)
 # Cell_Type_Specific view
 # search genes and cells for expression level graphs.
 # post method to submit forms and return the data.
