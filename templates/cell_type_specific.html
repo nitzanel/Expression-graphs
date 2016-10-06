@@ -27,18 +27,18 @@
 		{% endfor %}
 		
 	</div>
-	
+	<div class="graphs">
+
 	{% if graphs_data %}
 		<div style="display:none;">
 			there are graphs
 		</div>
 		{% for graph in graphs_data %}
-			<div class="graphs">
 				<embed type='image/svg+xml' src = {{ graph|safe }} />
 				<br>
-			</div>
 		{% endfor %}
 	{% endif %}
+	</div>
 
 
 {% endblock %}

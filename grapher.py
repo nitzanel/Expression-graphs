@@ -51,12 +51,19 @@ class Grapher():
 				return -1	
 		return data, noise_data
 
+	def pi_plot(self, gene_name,cells='ALL',datasets='ALL'):
+		data, noise_data = self.loader.get_gene(gene_name=gene_name,datasets=datasets,cells=cells)
+		# check if the data is empty:
+		for dataset in data:
+			if data[dataset] == {}:
+				return -1, -1	
+		return data, noise_data
 	def ctc_plot(self,gene_name,cell_type,datasets = 'ALL'):
 		data, noise_data = self.loader.get_gene(gene_name=gene_name,datasets=datasets,cells=cell_type)
 		# check if the data is empty:
 		for dataset in data:
 			if data[dataset] == {}:
-				return -1	
+				return -1, -1	
 		return data, noise_data		
 
 	def new_plot(self,gene_name,cells='ALL'):

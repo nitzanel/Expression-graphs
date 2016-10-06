@@ -224,6 +224,10 @@ class CTCGraphs(flask.views.MethodView):
 	def get(self, gene_name, cell_type):
 		form = forms.CellTypeSpecificForm()
 		# check for bad symbols in address.
+		gene_name = gene_name.upper()
+		if gene_name == '':
+			flask.flash('please enter gene symbol')
+			return flask.render_template('cell_type_specific.html',form=form)
 		for symbol in bad_symbols:
 			if symbol in gene_name or symbol in cell_type:
 				flask.flash('Symbol not valid.')
@@ -231,90 +235,117 @@ class CTCGraphs(flask.views.MethodView):
 
 		data, noise_data = grapher.ctc_plot(gene_name,cell_type)
 
+		# check if there is data. if not, alert the user the gene doesnt exist.
+		if data == -1:
+			flask.flash('gene not found.')
+			return flask.render_template('cell_type_specific.html',form=form)
+		# create graphs for the data.
 
-		male_data = []
-		female_data = []
-		female_names = []
-		male_names = []
-		
-		"""
-		Code that generate graphs.
-		"""
-		for data_set in data:
-			for data_tuple_key in data[data_set]:
-				current_data = data[data_set][data_tuple_key]
-				exp_males = []
-				exp_females = []
+		males_data = []
+		females_data = []
+		x_labels = []
+		graphs = []
+		graph = pygal.XY(stroke=False,show_y_guides=False,
+								truncate_label =-1,dots_size=4,
+								legend_at_bottom=True)
 
+		for index, data_set in enumerate(data):
+			for repeat in data[data_set]:
+				current_data = data[data_set][repeat]
 				for tup in current_data:
 					exp_level = float(tup[1])
-					#if exp_level != 0:
-					if True:
-						parts = tup[0].split('_')
-						if 'M' in parts or 'male' in parts:
-							exp_males.append(exp_level)
-						elif 'M' in parts or 'female' in parts:
-							exp_females.append(exp_level)
- 
-				male_data.append(exp_males)
-				female_data.append(exp_females)
-				male_names.append(' '.join(['males',data_set,data_tuple_key]))
-				female_names.append(' '.join(['females',data_set,data_tuple_key]))
-				#graph.add(' '.join(['males',data_set,data_tuple_key]),exp_males)
-				#graph.add(' '.join(['females',data_set,data_tuple_key]),exp_females)
-		x_counter = 0
-
-		graph = pygal.XY(show_x_labels=False,show_y_guides=False,legend_at_bottom=True)
-
-
-		for name, bars in zip(male_names,male_bars):
-			graph.add(name,bars)
-		for name, bars in zip(female_names,female_bars):
-			graph.add(name,bars)
+					parts = tup[0].split('_')
+					cell = parts[0]					
+					if 'M' in parts or 'male' in parts:	
+						# its a male cell, add to male_data
+						males_data.append((index+1,exp_level))
+					elif 'F' in parts or 'female' in parts:
+						# its a female cell
+						females_data.append((index+1,exp_level))
+			x_labels.append({ 'value': index+1,'label':"db_{0}".format(index)})
+		graph.title = "{0} exp level in cell {1}".format(gene_name,cell_type)
+		graph.y_title = 'exp level log2'
+		graph.add('Female',females_data)
+		graph.add('Male',males_data)
+		graph.x_labels = x_labels
+		graphs.append(graph.render_data_uri())
 
 		messages = get_noise_message(noise_data)
 
-		graph.title = ' '.join([gene_name,'expression level in',cell_type])
-		graph.y_title = 'expression level log2'
-		graphs_data = []
-		graphs_data.append(graph.render_data_uri())
+		return flask.render_template('cell_type_specific.html',form=form,graphs_data=graphs,messages=messages)
 
-		red_style = LightenStyle('#%02X%02X%02X' % (150,0,0))
-		blue_style = LightenStyle('#%02X%02X%02X' % (20,25,80))
-
-		# bar graphs for each:
-		graph = pygal.Histogram(show_x_labels=False,show_y_guides=False,style=blue_style,legend_at_bottom=True)
-		for name,bars in zip(male_names,male_bars):
-			new_bars = []
-			for bar in bars:
-				new_bars.append(bar['value'])
-			graph.add(name,new_bars)
-		graph.title = ' '.join([gene_name, 'expression level in male',cell_type])
-		graph.y_title = 'expression level log2'
-
-		graphs_data.append(graph.render_data_uri())
-
-		graph = pygal.Histogram(show_x_labels=False,show_y_guides=False,style=red_style,legend_at_bottom=True)
-		for name,bars in zip(female_names,female_bars):
-			new_bars = []
-			for bar in bars:
-				new_bars.append(bar['value'])
-			graph.add(name,new_bars)
-		graph.title = ' '.join([gene_name, 'expression level in female',cell_type])
-		graph.y_title = 'expression level log2'
-		graphs_data.append(graph.render_data_uri())
-
-		return flask.render_template('cell_type_specific.html',form=form,data=data,graphs_data=graphs_data, messages=messages)
-
-
-
-		#return flask.render_template('cell_type_specific.html',form=form)
+		#return flask.render_template('cell_type_specific.html',form=form,data=data,graphs_data=graphs_data, messages=messages)
 	def post(self, gene_name, cell_type): 
 		return "{} {}".format(gene_name,cell_type)
 # the pattern based pi graph address
 class PIGraphs(flask.views.MethodView):
 	def get(self,gene_name):
-		return "{}".format(gene_name)
+		
+		form = forms.CellTypeSpecificForm()
+		# check for bad symbols in address.
+		
+		gene_name = gene_name.upper()
+
+		for symbol in bad_symbols:
+			if symbol in gene_name:
+				flask.flash('Symbol not valid.')
+				return flask.render_template('pan_immune.html',form=form)
+
+		data, noise_data = grapher.new_plot(gene_name)
+		# if there is no data, there is no gene with this symbol. alert the user.
+
+		if data == -1:
+			flask.flash('Gene not found.')	
+			return flask.render_template('pan_immune.html',form=form)			
+		
+		graphs = []
+		for data_set in data:		
+			for data_tuple_key in data[data_set]:
+				# current_data holds a list of tuples with column names and values		
+				current_data = data[data_set][data_tuple_key][5:] 
+				graph = pygal.XY(stroke=False,show_y_guides=False,
+								truncate_label =-1,dots_size=4,
+								legend_at_bottom=True)
+				current_male_x = 0
+				current_female_x = 0
+				current_x = 0
+				margin = 2
+				last_female_cell = ''
+				last_male_cell = ''
+				# the data will be arranged as a list of tuples, each tuple will be as (X,Y)
+				males_data = []
+				females_data = []
+				x_labels = []
+				for tup in current_data:
+					exp_level = float(tup[1])
+					parts = tup[0].split('_')
+					cell = parts[0]
+					# check if it is a male or female cell.
+					if 'M' in parts or 'male' in parts:
+						# its a male cell
+						if cell != last_male_cell:
+							last_male_cell = cell
+							current_male_x += 2
+							current_x = current_male_x
+						males_data.append((current_male_x,exp_level))
+					elif 'F' in parts or 'female' in parts:
+						# its a female cell
+						if cell != last_female_cell:
+							last_female_cell = cell
+							current_female_x += 2
+							current_x = current_female_x
+						females_data.append((current_female_x,exp_level))
+					x_labels.append({ 'value': current_x,'label':cell })
+				# send data for labels if needed.
+				graph.title = ' '.join([gene_name,'exp level dataset:',data_set,data_tuple_key])
+				graph.y_title = 'exp level log2'
+				graph.add('Female',females_data)
+				graph.add('Male',males_data)
+				graph.x_labels = x_labels
+				graphs.append(graph.render_data_uri())
+		messages = get_noise_message(noise_data)
+		return flask.render_template('pan_immune.html',form=form,graphs=graphs,messages=messages)
+
 	def post(self,gene_name):
 		return "{}".format(gene_name)
 # Cell_Type_Specific view
