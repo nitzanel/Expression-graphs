@@ -210,16 +210,59 @@ def autocomplete(obj_response, value):
 
 # get noise message filter.
 def get_noise_message(noise_data):
-	messages = []
+	# find which repeats didnt pass the filter
+	filtered = []
 	for key in noise_data:
-		for k, val in enumerate(noise_data[key]):
-			text = ' '.join(['values in',key,'repeat',str(k+1),"noise filter value",str(val[0])])
-			messages.append(text)
-	return messages
+		for rep, noise_val in enumerate(noise_data[key]):
+			if noise_val[0] == '0':
+				# increment rep so it start at 1 instead of 0 (repeat 1, repeat 2 ...)
+				filtered.append(str(rep+1))
+	# remove duplicates			
+	filtered = list(set(filtered))		
+	repeat_text = 'repeat'
+	if len(filtered) == 0:
+		return ['']
+	if len(filtered) > 1:
+		repeat_text = 'repeats'
+	filtered = ','.join(filtered)
+	message = 'Please note that the expression levels of this gene in {0}: {1} are very low'.format(repeat_text, filtered)
+	return [message]
+
+# get dataset new name DS_A DS_B and so on
+def get_ds_name(db):
+	if db.startswith('FM_IFN'):
+		return 'DS_A'
+	elif db.startswith('ImmGen'):
+		return 'DS_B'
+	elif db.startswith('Female_Male'):
+		return 'DS_C'
+	elif db.startswith('pilot8'):
+		return 'DS_D'
+	print 'get_db_name recieved bad input: {0} .'.format(db)
+	return 'unknown db'
+
+# get sorted graphs_list to display graphs according to ds_a rep 1, rep 2 ... ds_b rep 1, .... 
+def sort_graphs(graphs_list):
+	sorted_graphs = sorted(graphs_list,key=lambda graph: graph.title.split(':'))
+	return sorted_graphs
+
+# get sorted x_labels
+def sort_labels(x_labels):
+	sorted_labels = sorted(x_labels)
+	return sorted_labels
+
+def sort_columns(values):
+	pass
+
+# get label name from index for ctc graphs
+def get_label_name(index):
+	return "DS_{0}".format(chr(index + ord('A')))
 
 
+# unacceptable symbols in gene_name or cell_type
 bad_symbols = ['"',"'"]
 # the pattern based ctc graph address
+# TODO: fix order
 class CTCGraphs(flask.views.MethodView):
 	def get(self, gene_name, cell_type):
 		form = forms.CellTypeSpecificForm()
@@ -249,7 +292,8 @@ class CTCGraphs(flask.views.MethodView):
 								truncate_label =-1,dots_size=4,
 								legend_at_bottom=True)
 
-		for index, data_set in enumerate(data):
+		for index, 
+		 in enumerate(data):
 			for repeat in data[data_set]:
 				current_data = data[data_set][repeat]
 				for tup in current_data:
@@ -262,7 +306,7 @@ class CTCGraphs(flask.views.MethodView):
 					elif 'F' in parts or 'female' in parts:
 						# its a female cell
 						females_data.append((index+1,exp_level))
-			x_labels.append({ 'value': index+1,'label':"db_{0}".format(index)})
+			x_labels.append({ 'value': index+1,'label':get_label_name(index)})
 		graph.title = "{0} exp level in cell {1}".format(gene_name,cell_type)
 		graph.y_title = 'exp level log2'
 		graph.add('Female',females_data)
@@ -336,13 +380,17 @@ class PIGraphs(flask.views.MethodView):
 							current_x = current_female_x
 						females_data.append((current_female_x,exp_level))
 					x_labels.append({ 'value': current_x,'label':cell })
+				# remove the last label in x_labels, because it is 'noise' and it obscures the label before it.
+				x_labels.pop()
 				# send data for labels if needed.
-				graph.title = ' '.join([gene_name,'exp level dataset:',data_set,data_tuple_key])
+				graph.title = ' '.join([gene_name,'exp level dataset:',get_ds_name(data_set),data_tuple_key])
 				graph.y_title = 'exp level log2'
 				graph.add('Female',females_data)
 				graph.add('Male',males_data)
 				graph.x_labels = x_labels
-				graphs.append(graph.render_data_uri())
+				graphs.append(graph)
+		graphs = sort_graphs(graphs)
+		graphs = list(map(lambda graph: graph.render_data_uri(),graphs))
 		messages = get_noise_message(noise_data)
 		return flask.render_template('pan_immune.html',form=form,graphs=graphs,messages=messages)
 
