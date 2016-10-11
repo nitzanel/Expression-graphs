@@ -1,5 +1,4 @@
 import openpyxl as pyxl
-import numpy as np
 import sqlite3 as lite
 class Loader():
 	def __init__(self):

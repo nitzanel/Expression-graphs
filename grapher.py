@@ -1,7 +1,6 @@
 from loader import Loader
 import openpyxl as pyxl
 import os.path
-import numpy as np
 
 class Grapher():
 
