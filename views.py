@@ -292,8 +292,7 @@ class CTCGraphs(flask.views.MethodView):
 								truncate_label =-1,dots_size=4,
 								legend_at_bottom=True)
 
-		for index, 
-		 in enumerate(data):
+		for index,data_set in enumerate(data):
 			for repeat in data[data_set]:
 				current_data = data[data_set][repeat]
 				for tup in current_data:
