@@ -15,16 +15,19 @@
 			</p>
 			<p><input type="submit" name="search"></p>
 		</form>
-		<p>
-		{% with messages = get_flashed_messages() %}
+			<p>
+				{% with messages = get_flashed_messages() %}
+					{% for message in messages %}
+						{{message}}
+					{% endfor %}
+				{% endwith %}
+			</p>
 			{% for message in messages %}
-				{{message}}
+				<p style="color:red; font-size:17px;"> 
+				{{ message }} 
+				</p> 
+				<br>
 			{% endfor %}
-		{% endwith %}
-		</p>
-		{% for message in messages %}
-			<p> {{ message }} </p> <br>
-		{% endfor %}
 		
 	</div>
 	<div class="graphs">

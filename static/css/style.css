@@ -57,6 +57,12 @@ main{
 	align-items:center;
 }
 
+
+.noise_message {
+	color: #C30202;
+	font-size: 17px;
+}
+
 .graphs embed {
 	width: 1000px;
 }

@@ -68,18 +68,15 @@ class FlaskApp(object):
 		self.app.add_url_rule('/homepage',
 				view_func=views.Homepage.as_view('homepage'),
 				methods=['GET'])
-		self.app.add_url_rule('/sijax_test',
-				view_func=views.SijaxTest.as_view('sijax_test'),
-				methods=['GET','POST'])
 
 		""" some sort of a simplified REST ideas """
 
 		self.app.add_url_rule('/genes/cell_type_specific/<gene_name>/<cell_type>',
 				view_func=views.CTCGraphs.as_view('ctcgraphs'),
-				methods=['GET','POST'])
+				methods=['GET'])
 		self.app.add_url_rule('/genes/pan_immune/<gene_name>',
 				view_func=views.PIGraphs.as_view('pigraphs'),
-				methods=['GET','POST'])
+				methods=['GET'])
 		
 		""" Cool error handles """ 
 		
@@ -125,4 +122,4 @@ class FlaskApp(object):
 if __name__ == '__main__':
 	print 'starting app'
 	App = FlaskApp().app
-	App.run(threaded=True)
+	App.run(threaded=True,host='0.0.0.0')

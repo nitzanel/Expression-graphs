@@ -20,13 +20,16 @@
 		<br>
 
 	</div>
-	{% for message in messages %}
-		<p> {{ message }} </p> 
-	{% endfor %}
-	{% if data %}
-		have data!
-		{{ data }}
-	{% endif %}
+
+		{% for message in messages %}
+			<p style="color:red; font-size:17px;"> 
+	 				{{ message }}
+	 		</p> 
+		{% endfor %}
+		{% if data %}
+			have data!
+			{{ data }}
+		{% endif %}
 
 	<div class='graphs'>
 	{% if graphs %}
