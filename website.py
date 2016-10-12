@@ -7,6 +7,7 @@ import flask_sijax
 import functools
 import pygal
 import zipfile
+import time
 
 class FlaskApp(object):
 
@@ -18,25 +19,6 @@ class FlaskApp(object):
 
 
 	def __init__(self):
-		# check database version
-		current_db_version = 0.0
-		new_db_version = 0.0
-		with open('database/version.txt','r') as f:
-			current_db_version = f.read()
-
-		zfile = zipfile.ZipFile('database/db.zip')
-		zfile.extract('version.txt','database')
-		with open('database/version.txt','r') as f:
-			new_db_version = f.read()
-		if new_db_version == current_db_version:
-			print 'versions match!'
-		else:
-			print 'versions do not match!'
-			# extract the database
-			print "extracting database..."
-			zfile = zipfile.ZipFile('database/db.zip')
-			zfile.extractall('database')
-			print "database extracted..."	
 		# configure the site.
 		path = os.path.join('.', os.path.dirname(__file__), 'static/js/sijax/')
 		self.app = flask.Flask(__name__.split('.')[0])
