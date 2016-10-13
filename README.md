@@ -3,18 +3,24 @@
 <b>How to use:</b>
 <p>
 Download the project from github.
-
-Option 1:
-	Download with git.
-	type into the command line:
+</p>
+<br>
+<p>
+<b>Option 1: </b>
+<br>
+	Download with git.<br>
+	type into the command line:<br>
 	git clone  https://github.com/nitzanel/expression-graphs.git
-
-Option 2:
-	Download from github.
-	go to https://github.com/nitzanel/expression-graphs
-	download the zip file of the project.
-	extract the zip file.
-
+</p>
+<br>
+<p>
+Option 2: <br>
+	Download from github. <br>
+	go to https://github.com/nitzanel/expression-graphs <br>
+	download the zip file of the project. <br>
+	extract the zip file. <br>
+</p>
+<p>
 optional step:
 	create virtualenv for the project.
 
