@@ -14,14 +14,13 @@ Download the project from github.
 </p>
 <br>
 <p>
-Option 2: <br>
+<b> Option 2: </b> <br>
 	Download from github. <br>
 	go to https://github.com/nitzanel/expression-graphs <br>
 	download the zip file of the project. <br>
 	extract the zip file. <br>
-</p>
-<p>
-optional step:
+
+<b> optional step: </b>
 	create virtualenv for the project.
 
 Prepare to use the website:
