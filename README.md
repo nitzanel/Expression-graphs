@@ -1,7 +1,4 @@
-"# gene_database"
-
-genetic expression graphs of immune system genes.
-
+A website that generates genetic expression graphs of immune system genes.
 
 How to use:
 
