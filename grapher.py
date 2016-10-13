@@ -65,11 +65,11 @@ class Grapher():
 				return -1, -1	
 		return data, noise_data		
 
-	def new_plot(self,gene_name,cells='ALL'):
+	def pi_plot(self,gene_name,cells='ALL'):
 		data, noise_data = self.loader.get_gene(gene_name=gene_name,datasets='ALL',cells=cells)
 		for dataset in data:
 			if data[dataset] == {}:
-				return -1
+				return -1, []
 		return data, noise_data
 
 	def bar_plot(self,gene_name,cell_name):

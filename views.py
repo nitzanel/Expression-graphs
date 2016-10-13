@@ -343,13 +343,14 @@ class PIGraphs(flask.views.MethodView):
 				flask.flash('Symbol not valid.')
 				return flask.render_template('pan_immune.html',form=form)
 
-		data, noise_data = grapher.new_plot(gene_name)
+		data, noise_data = grapher.pi_plot(gene_name)
 		# if there is no data, there is no gene with this symbol. alert the user.
-
 		if data == -1:
 			flask.flash('Gene not found.')	
 			return flask.render_template('pan_immune.html',form=form)			
-		
+		if noise_data == []:
+			flask.flash('Gene not found.')
+			return flask.render_template('pan_immune.html',form=form)
 		graphs = []
 		for data_set in data:		
 			for data_tuple_key in data[data_set]:
@@ -416,8 +417,9 @@ class PIGraphs(flask.views.MethodView):
 				graph.y_title = 'exp level log2'
 				graph.add('Female',females_data)
 				graph.add('Male',males_data)
-				graph.add('IFN_Female',IFN_females_data)
-				graph.add('IFN_Male',IFN_males_data)
+				if 'DS_A' in graph.title:
+					graph.add('IFN_Female',IFN_females_data)
+					graph.add('IFN_Male',IFN_males_data)
 				graph.x_labels = x_labels
 				graphs.append(graph)
 		graphs = sort_graphs(graphs)
