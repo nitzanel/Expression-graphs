@@ -1,7 +1,7 @@
-A website that generates genetic expression graphs of immune system genes.
+<h2>A website that generates genetic expression graphs of immune system genes.</h2>
 
-How to use:
-
+<b>How to use:</b>
+<p>
 Download the project from github.
 
 Option 1:
@@ -25,4 +25,4 @@ Prepare to use the website:
 	use the website:
 		python website.py
 
-
+</p>
