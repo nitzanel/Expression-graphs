@@ -23,11 +23,11 @@ Download the project from github.
 <b> optional step: </b>
 	create virtualenv for the project.
 
-Prepare to use the website:
-	cd into the directory
-	install the dependecies:
-		python setup.py
-	use the website:
-		python website.py
+Prepare to use the website:<br>
+	cd into the directory <br>
+	install the dependecies: <br>
+		python setup.py <br>
+	use the website: <br>
+		python website.py <br>
 
 </p>
