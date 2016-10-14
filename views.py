@@ -5,9 +5,7 @@ import os
 import functools
 import flask_sijax
 import pygal
-from pygal.style import LightenStyle, SaturateStyle
 import styles
-import random
 
 # the grapher object. just a middle man for the loader.
 grapher = grapher.Grapher()
@@ -182,7 +180,6 @@ def autocomplete(obj_response, value):
 	# add autocomplete options, and clear the previous ones.
 	obj_response.html('#genes_datalist','')
 	obj_response.html_append('#genes_datalist',''.join(options))	
-	print options	
 
 # get noise message filter.
 # input: noise data.
@@ -438,7 +435,6 @@ class Cell_Type_Specific(flask.views.MethodView):
 	def post(self):			
 		# autocomplete current symbols	
 		if flask.g.sijax.is_sijax_request:
-			print flask.g.sijax.get_js()
 			flask.g.sijax.register_callback('autocomplete',autocomplete)
 			return flask.g.sijax.process_request()
 		form = forms.CellTypeSpecificForm()

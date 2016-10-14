@@ -7,6 +7,8 @@ import flask_sijax
 import functools
 import pygal
 import zipfile
+import logging
+from logging.handlers import RotatingFileHandler
 
 class FlaskApp(object):
 
@@ -24,6 +26,13 @@ class FlaskApp(object):
 		self.app.config['SIJAX_STATIC_PATH'] = path
 		self.app.config['SIJAX_JSON_URI'] = '/static/js/sijax/json2.js'
 		self.app.secret_key = os.urandom(128)
+		# create an error log.
+		log_handler = RotatingFileHandler('errors.log',maxBytes=1024*1024*10,backupCount=10)
+		log_handler.setLevel(logging.ERROR)
+		formatter = logging.Formatter("%(levelname)s - %(message)s \n")
+		log_handler.setFormatter(formatter)
+		self.app.logger.addHandler(log_handler)
+
 		print "setting sijax..."
 		flask_sijax.Sijax(self.app)
 		
@@ -86,6 +95,7 @@ class FlaskApp(object):
 		def page_not_found(e):
 			chart = pygal.Bar()
 			chart.title = ''.join([str(500),' Internal Server Error']) 
+			self.app.logger.error(e)
 			graph = chart.render_data_uri()
 			return flask.render_template('error.html',graph=graph), 500
 
