@@ -7,7 +7,6 @@ import flask_sijax
 import functools
 import pygal
 import zipfile
-import time
 
 class FlaskApp(object):
 
