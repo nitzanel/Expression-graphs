@@ -1,5 +1,6 @@
 {% extends 'homepage.html' %}
 {% block body %}
+<div class='center'>
 	<div class='search'>
 		<h1> Expression level of gene in specific cell </h1>
 		<form action="{{ url_for('cell_type_specific') }}" method="post" id="search_gene">
@@ -42,6 +43,6 @@
 		{% endfor %}
 	{% endif %}
 	</div>
-
+</div>
 
 {% endblock %}

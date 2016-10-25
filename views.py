@@ -131,7 +131,15 @@ class Homepage(flask.views.MethodView):
 # Displays information about the site.
 class About(flask.views.MethodView):
 	def get(self):
-		return flask.render_template('about.html')
+		# get the pi and ctc graphs examples
+		pi_graph = ''
+		ctc_graph = ''
+		with open('pi_uri_data','r') as f:
+			pi_graph = f.read()
+		with open('ctc_uri_data','r') as f:
+			ctc_graph = f.read()
+	
+		return flask.render_template('about.html',pi_graph = pi_graph, ctc_graph = ctc_graph)
 
 
 # Genes view
@@ -317,11 +325,19 @@ class CTCGraphs(flask.views.MethodView):
 		graph.y_title = 'exp level log2'
 		graph.add('Female',females_data)
 		graph.add('Male',males_data)
-		graph.add('Female_IFN',IFN_females_data)
-		graph.add('Males_IFN',IFN_males_data)
+		if len(IFN_females_data) != 0 or len(IFN_males_data) != 0:
+			graph.add('Female_IFN',IFN_females_data)
+			graph.add('Males_IFN',IFN_males_data)
 		graph.x_labels = x_labels
 		graphs.append(graph.render_data_uri())
-
+		"""
+		# create a file to hold the graph code
+		with open('ctc_uri_data','w') as f:
+			f.write(graph.render_data_uri())
+		
+		print 'created ctc_data'
+		"""
+		
 		messages = get_noise_message(noise_data)
 
 		return flask.render_template('cell_type_specific.html',form=form,graphs_data=graphs,messages=messages)
@@ -420,6 +436,11 @@ class PIGraphs(flask.views.MethodView):
 				graph.x_labels = x_labels
 				graphs.append(graph)
 		graphs = sort_graphs(graphs)
+		"""
+		craete a file to hold the first graph data
+		with open('pi_uri_data','w') as f:
+			f.write(graphs[0].render_data_uri())
+		"""
 		graphs = list(map(lambda graph: graph.render_data_uri(),graphs))
 		messages = get_noise_message(noise_data)
 		return flask.render_template('pan_immune.html',form=form,graphs=graphs,messages=messages)

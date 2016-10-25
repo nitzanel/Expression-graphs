@@ -1,4 +1,21 @@
 {% extends 'homepage.html' %}
 {% block body %}
+<div class='center'>
 	<h1> Welcome to the about page!</h1>
+
+	<h3>
+	PAN_IMMUNE graphs shows the expression levels of a selected gene across all cells in the database. each graph shows the expression levels in one <b>dataset</b>.</h3>
+	<p>
+		Example of the XIST gene graph:
+	</p>
+	<embed type='image/svg+xml' src={{ pi_graph|safe }} />
+	<br>
+	<h3>
+	CELLS_TYPE_SPECIFIC graphs shows the expression levels of a selected gene in a selected cell across all datasets.
+	</h3>
+	<p>
+	Example of the xist gene in GN cell graph:
+	</p>
+	<embed type='image/svg+xml' src = {{ ctc_graph|safe }} />
+</div>
 {% endblock %}

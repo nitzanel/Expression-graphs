@@ -1,7 +1,8 @@
 {% extends 'homepage.html' %}
 {% block body %}
+<div class='center'>
 	<div class='search'>
-		<h2> Gene Expression Male vs. Females</h2>
+		<h1> Gene Expression Male vs. Females</h1>
 		<form action="{{ url_for('pan_immune') }}" method="post" id="search_gene">
 			<p>
 				Type the gene symbol to see its expression levels in mice immune cells:<br>
@@ -43,5 +44,5 @@
 		{% endfor %}
 	{% endif %}
 	</div>
-
+</div>
 {% endblock %}

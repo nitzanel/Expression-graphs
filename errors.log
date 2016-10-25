@@ -1,0 +1,73 @@
+ERROR - Exception on /genes/cell_type_specific/GN/xist [GET] 
+Traceback (most recent call last):
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1988, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1641, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1544, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1639, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1625, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/usr/local/lib/python2.7/dist-packages/flask/views.py", line 84, in view
+    return self.dispatch_request(*args, **kwargs)
+  File "/usr/local/lib/python2.7/dist-packages/flask/views.py", line 149, in dispatch_request
+    return meth(*args, **kwargs)
+  File "/home/nitzanel/expression-graphs/views.py", line 264, in get
+    data, noise_data = grapher.ctc_plot(gene_name,cell_type)
+  File "/home/nitzanel/expression-graphs/grapher.py", line 61, in ctc_plot
+    data, noise_data = self.loader.get_gene(gene_name=gene_name,datasets=datasets,cells=cell_type)
+  File "/home/nitzanel/expression-graphs/loader.py", line 84, in get_gene
+    values_list = self.get_gene_data(gene_name,dataset,cells)
+  File "/home/nitzanel/expression-graphs/loader.py", line 134, in get_gene_data
+    cursor = self.conn.execute(self.get_select_command(gene_name,data_set,cells))
+OperationalError: near "from": syntax error
+ERROR - near "from": syntax error 
+
+ERROR - Exception on /about [GET] 
+Traceback (most recent call last):
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1988, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1641, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1544, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1639, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1625, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/usr/local/lib/python2.7/dist-packages/flask/views.py", line 84, in view
+    return self.dispatch_request(*args, **kwargs)
+  File "/usr/local/lib/python2.7/dist-packages/flask/views.py", line 149, in dispatch_request
+    return meth(*args, **kwargs)
+  File "/home/nitzanel/expression-graphs/views.py", line 142, in get
+    pi_graph.pop()
+AttributeError: 'str' object has no attribute 'pop'
+ERROR - 'str' object has no attribute 'pop' 
+
+ERROR - Exception on /genes/pan_immune [POST] 
+Traceback (most recent call last):
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1988, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1641, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1544, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1639, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1625, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/usr/local/lib/python2.7/dist-packages/flask/views.py", line 84, in view
+    return self.dispatch_request(*args, **kwargs)
+  File "/usr/local/lib/python2.7/dist-packages/flask/views.py", line 149, in dispatch_request
+    return meth(*args, **kwargs)
+  File "/home/nitzanel/expression-graphs/views.py", line 491, in post
+    return flask.g.sijax.process_request()
+  File "/usr/local/lib/python2.7/dist-packages/flask_sijax.py", line 157, in process_request
+    response = self._sijax.process_request()
+  File "/usr/local/lib/python2.7/dist-packages/sijax/core.py", line 287, in process_request
+    raise SijaxError('You should not call this for non-Sijax requests!')
+SijaxError: You should not call this for non-Sijax requests!
+ERROR - You should not call this for non-Sijax requests! 
+

@@ -12,6 +12,7 @@ ctc_style = Style(
   opacity_hover='.9',
   transition='400ms ease-in',
   label_font_size=16.0,
+  major_label_font_size=16.0,
   colors=('#D65B5B','#423EDA','#CE79DB','#6DB2E7'))
 
 pi_style = Style(
@@ -24,6 +25,7 @@ pi_style = Style(
   opacity_hover='.9',
   transition='400ms ease-in',
   label_font_size=16.0,
+  major_label_font_size=16.0,
   colors=('#D65B5B','#423EDA','#CE79DB','#6DB2E7'))
 
 histo_style_4_sets = Style(
