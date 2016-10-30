@@ -321,8 +321,8 @@ class CTCGraphs(flask.views.MethodView):
 			graph.range = (0,max_exp_value + 1) 
 		else:
 			graph.range = (0,5)	
-		graph.title = "{0} exp level in cell {1}".format(gene_name,cell_type)
-		graph.y_title = 'exp level log2'
+		graph.title = "{0} in {1}".format(gene_name,cell_type)
+		graph.y_title = 'Log2 (expression level)'
 		graph.add('Female',females_data)
 		graph.add('Male',males_data)
 		if len(IFN_females_data) != 0 or len(IFN_males_data) != 0:
@@ -330,14 +330,12 @@ class CTCGraphs(flask.views.MethodView):
 			graph.add('Males_IFN',IFN_males_data)
 		graph.x_labels = x_labels
 		graphs.append(graph.render_data_uri())
-		"""
+		
 		# create a file to hold the graph code
+		"""
 		with open('ctc_uri_data','w') as f:
 			f.write(graph.render_data_uri())
-		
-		print 'created ctc_data'
-		"""
-		
+		"""		
 		messages = get_noise_message(noise_data)
 
 		return flask.render_template('cell_type_specific.html',form=form,graphs_data=graphs,messages=messages)
@@ -426,8 +424,8 @@ class PIGraphs(flask.views.MethodView):
 					graph.range = (0,max_exp_value + 1) 
 				else:
 					graph.range = (0,5)	
-				graph.title = ' '.join([gene_name,'exp level dataset:',get_ds_name(data_set),data_tuple_key])
-				graph.y_title = 'exp level log2'
+				graph.title = ' '.join([gene_name,'in',get_ds_name(data_set),data_tuple_key])
+				graph.y_title = 'Log2 (expression level)'
 				graph.add('Female',females_data)
 				graph.add('Male',males_data)
 				if 'DS_A' in graph.title:
@@ -436,8 +434,8 @@ class PIGraphs(flask.views.MethodView):
 				graph.x_labels = x_labels
 				graphs.append(graph)
 		graphs = sort_graphs(graphs)
+		#	craete a file to hold the first graph data
 		"""
-		craete a file to hold the first graph data
 		with open('pi_uri_data','w') as f:
 			f.write(graphs[0].render_data_uri())
 		"""
