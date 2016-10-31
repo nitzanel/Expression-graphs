@@ -207,7 +207,7 @@ def get_noise_message(noise_data):
 	if len(filtered) > 1:
 		repeat_text = 'repeats'
 	filtered = ','.join(filtered)
-	message = 'Please note that the expression levels of this gene in {0}: {1} are very low'.format(repeat_text, filtered)
+	message = 'Note:  We consider the expression levels of this gene as too low to be reliable! {0}: {1}'.format(repeat_text, filtered)
 	return [message]
 
 # get dataset new name DS_A DS_B and so on

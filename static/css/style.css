@@ -31,10 +31,15 @@ input::-webkit-calendar-picker-indicator {
 }
 
 
+
 .active{
 	background: #d66a00;
 	border: 1px solid #d66a00;
 	color: white; 
+}
+
+.tables{
+	border: 1px solid black;
 }
 
 body {
