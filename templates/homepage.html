@@ -19,8 +19,11 @@
 		Should use css to make sure size is correct
 		-->
 
+			<img src="{{ url_for('static',filename='images/LOGO.png') }}" style="height:200px" />
+			<br>
+			<br>
+			<br>
 			<nav>
-				<img src="{{ url_for('static',filename='images/LOGO.png') }}" style="width: 300px; height:auto;"/>
 				<a {% if "pan_immune" in request.path.split('/') %}class="active"{% endif %} href="{{ url_for('pan_immune') }}"> <strong> pan_immune </strong></a>
 				<a {% if "cell_type_specific" in request.path.split('/') %}class="active"{% endif %} href="{{ url_for('cell_type_specific') }}"> <strong> cell_type_specific </strong></a>
 				<a {% if "about" in request.path.split('/') %} class="active"{% endif %} href="{{ url_for('about') }}"> <strong> About </strong></a>

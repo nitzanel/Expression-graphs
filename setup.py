@@ -14,9 +14,10 @@ def extract_database():
     zfile = zipfile.ZipFile('database/db.zip')
     zfile.extractall('database')
     print "database extracted."
-    print "\n************************"
+    print "\n"
+    print "******************************************"
     print "to start using the website, use website.py"
-    print "*************************"
+    print "******************************************"
 
 
 if __name__ == '__main__':

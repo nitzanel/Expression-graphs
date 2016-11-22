@@ -13,11 +13,6 @@ from logging.handlers import RotatingFileHandler
 class FlaskApp(object):
 
 
-	def create_empty_chart(self,number):
-		chart = pygal.Bar()
-		chart.title = str(number)
-		return chart.render_data_uri()
-
 
 	def __init__(self):
 		# configure the site.
@@ -98,14 +93,12 @@ class FlaskApp(object):
 			self.app.logger.error(e)
 			graph = chart.render_data_uri()
 			return flask.render_template('error.html',graph=graph), 500
+	
+	def create_empty_chart(self,number):
+		chart = pygal.Bar()
+		chart.title = str(number)
+		return chart.render_data_uri()
 
-
-
-	def run_debug(self):
-		self.app.run(debug=True)
-
-	def run_threaded(self):
-		self.app.run(threaded=True)
 
 	def config_app(self,params):
 		pass
