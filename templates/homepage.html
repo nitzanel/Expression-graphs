@@ -20,7 +20,7 @@
 		-->
 
 			<nav>
-				<img src="{{ url_for('static',filename='images/logo.png') }}">
+				<img src="{{ url_for('static',filename='images/LOGO.png') }}" style="width: 300px; height:auto;"/>
 				<a {% if "pan_immune" in request.path.split('/') %}class="active"{% endif %} href="{{ url_for('pan_immune') }}"> <strong> pan_immune </strong></a>
 				<a {% if "cell_type_specific" in request.path.split('/') %}class="active"{% endif %} href="{{ url_for('cell_type_specific') }}"> <strong> cell_type_specific </strong></a>
 				<a {% if "about" in request.path.split('/') %} class="active"{% endif %} href="{{ url_for('about') }}"> <strong> About </strong></a>
